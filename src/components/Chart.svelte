@@ -115,6 +115,15 @@
     let mouseX = 0;
     let mouseY = 0;
 
+    // Keyboard navigation state
+    let currentFocusIndex = -1;
+    $: allDataPoints = [
+        ...historicalData,
+        ...theoryData,
+        ...deepLearningData,
+        ...speculativeData,
+    ].sort((a, b) => a.date_decimal - b.date_decimal);
+
     // Detect mobile vs desktop
     let isMobile = false;
     onMount(() => {
@@ -174,6 +183,32 @@
         }
     }
 
+    // Keyboard navigation handlers
+    function handleDataPointKeydown(point, event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            // Show tooltip at data point position
+            tooltipData = point;
+            tooltipVisible = true;
+            const pointElement = event.target;
+            const rect = pointElement.getBoundingClientRect();
+            mouseX = rect.left + rect.width / 2;
+            mouseY = rect.top + rect.height / 2;
+        }
+    }
+
+    function handleDataPointFocus(point, event) {
+        // Optional: show tooltip on focus for better accessibility
+        if (!isMobile) {
+            tooltipData = point;
+            tooltipVisible = true;
+            const pointElement = event.target;
+            const rect = pointElement.getBoundingClientRect();
+            mouseX = rect.left + rect.width / 2;
+            mouseY = rect.top + rect.height / 2;
+        }
+    }
+
     // Update mouse position
     function updateMousePosition(event) {
         mouseX = event.clientX;
@@ -182,7 +217,23 @@
 </script>
 
 <div class="chart-container" on:click={handleBackgroundClick}>
-    <svg {width} {height}>
+    <svg
+        {width}
+        {height}
+        role="img"
+        aria-label="Interactive chart showing AI compute milestones from 1900 to 2027"
+        aria-describedby="chart-description"
+    >
+        <!-- Hidden description for screen readers -->
+        <desc id="chart-description">
+            Line chart displaying the exponential growth of AI training compute
+            over time, measured in FLOPs (floating point operations). The chart
+            shows {allDataPoints.length} data points across {isLinearMode
+                ? "linear"
+                : "logarithmic"} scale, with Moore's Law reference line. Use Tab
+            key to navigate through data points, Enter or Space to view details.
+        </desc>
+
         <g transform={`translate(${margin.left},${margin.top})`}>
             <!-- Grid lines -->
             {#each yTicks as tick}
@@ -217,10 +268,16 @@
                     stroke-width="2"
                     opacity="0.9"
                     class="data-point"
+                    tabindex="0"
+                    role="button"
+                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. ${point.human_analogy || ""}`}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
+                    on:keydown={(e) => handleDataPointKeydown(point, e)}
+                    on:focus={(e) => handleDataPointFocus(point, e)}
+                    on:blur={handlePointLeave}
                 />
             {/each}
 
@@ -235,10 +292,16 @@
                     stroke-width="2"
                     opacity="0.95"
                     class="data-point"
+                    tabindex="0"
+                    role="button"
+                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. ${point.human_analogy || ""}`}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
+                    on:keydown={(e) => handleDataPointKeydown(point, e)}
+                    on:focus={(e) => handleDataPointFocus(point, e)}
+                    on:blur={handlePointLeave}
                 />
             {/each}
 
@@ -253,10 +316,16 @@
                     stroke-width="2"
                     opacity="0.9"
                     class="data-point"
+                    tabindex="0"
+                    role="button"
+                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. ${point.human_analogy || ""}`}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
+                    on:keydown={(e) => handleDataPointKeydown(point, e)}
+                    on:focus={(e) => handleDataPointFocus(point, e)}
+                    on:blur={handlePointLeave}
                 />
             {/each}
 
@@ -272,10 +341,16 @@
                     stroke-dasharray="3,3"
                     opacity="0.85"
                     class="data-point speculative"
+                    tabindex="0"
+                    role="button"
+                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. Speculative estimate. ${point.human_analogy || ""}`}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
+                    on:keydown={(e) => handleDataPointKeydown(point, e)}
+                    on:focus={(e) => handleDataPointFocus(point, e)}
+                    on:blur={handlePointLeave}
                 />
             {/each}
 
@@ -464,8 +539,20 @@
     }
 
     :global(.data-point:hover) {
-        r: 14;
-        opacity: 1 !important;
-        filter: drop-shadow(0 0 8px currentColor);
+        r: 12;
+        stroke-width: 3;
+        filter: drop-shadow(0 0 8px rgba(189, 16, 224, 0.6));
+    }
+
+    /* Keyboard focus styles */
+    :global(.data-point:focus) {
+        outline: 3px solid #bd10e0;
+        outline-offset: 4px;
+        filter: drop-shadow(0 0 12px rgba(189, 16, 224, 0.8));
+    }
+
+    :global(.data-point:focus-visible) {
+        r: 12;
+        stroke-width: 3;
     }
 </style>
