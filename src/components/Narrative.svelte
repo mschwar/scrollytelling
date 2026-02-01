@@ -2,11 +2,16 @@
     import { createEventDispatcher } from "svelte";
 
     export let isLinearMode = false;
+    export let showSpeculative = false;
 
     const dispatch = createEventDispatcher();
 
     function toggleScale() {
         dispatch("toggleScale");
+    }
+
+    function handleSpeculativeChange() {
+        dispatch("toggleSpeculative", showSpeculative);
     }
 </script>
 
@@ -91,6 +96,24 @@
                     {:else}
                         Warning: Switching to linear scale will make top models
                         disappear off-screen. This proves the magnitude.
+                    {/if}
+                </p>
+
+                <!-- NEW: Speculative Data Toggle -->
+                <label class="speculative-toggle">
+                    <input
+                        type="checkbox"
+                        bind:checked={showSpeculative}
+                        on:change={handleSpeculativeChange}
+                    />
+                    ⚠️ Show 2025-2026 Estimates (Speculative)
+                </label>
+                <p class="speculative-hint">
+                    {#if showSpeculative}
+                        Gray dashed dots are <em>estimates</em> based on trend extrapolation.
+                    {:else}
+                        Click to reveal speculative future models (hidden by
+                        default).
                     {/if}
                 </p>
             </div>
@@ -354,6 +377,42 @@
         color: white;
         text-decoration: none;
         transform: translateY(-1px);
+    }
+
+    /* Speculative Data Toggle */
+    .speculative-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 1.5rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: background 150ms ease;
+    }
+
+    .speculative-toggle:hover {
+        background: rgba(155, 155, 155, 0.1);
+    }
+
+    .speculative-toggle input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: var(--color-purple-ai, #bd10e0);
+    }
+
+    .speculative-hint {
+        font-size: 0.85rem;
+        color: rgba(26, 26, 26, 0.7);
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    .speculative-hint em {
+        color: #9b9b9b;
+        font-weight: 500;
     }
 
     /* Responsive adjustments */

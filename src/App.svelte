@@ -13,9 +13,17 @@
     // Linear scale toggle state
     let isLinearMode = false;
 
+    // Speculative data toggle state
+    let showSpeculative = false;
+
     // Handle toggle from Narrative component
     function handleToggleScale() {
         isLinearMode = !isLinearMode;
+    }
+
+    // Handle speculative toggle from Narrative
+    function handleToggleSpeculative(event) {
+        showSpeculative = event.detail;
     }
 
     // Global keyboard shortcut for scale toggle
@@ -78,7 +86,12 @@
 
     <!-- Layer 1: Chart (D3 Visualization) - STICKY -->
     <div class="chart-layer">
-        <Chart xDomain={$xDomainTween} yDomain={$yDomainTween} {isLinearMode} />
+        <Chart
+            xDomain={$xDomainTween}
+            yDomain={$yDomainTween}
+            {isLinearMode}
+            {showSpeculative}
+        />
     </div>
 
     <!-- Layer 2: Text (Scrollama Narrative) -->

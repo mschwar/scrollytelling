@@ -11,6 +11,7 @@
     export let xDomain = [1900, 2026];
     export let yDomain = [1, 1e27];
     export let isLinearMode = false; // Toggle between log/linear scale
+    export let showSpeculative = false; // Toggle speculative data visibility
 
     // Chart dimensions
     let width = 1200;
@@ -85,10 +86,27 @@
         return `10^${Math.round(exponent)}`;
     }
 
+    // Category color mapping
+    const categoryColors = {
+        Historical: "#F5A623", // Orange
+        "Deep Learning": "#BD10E0", // Purple
+        Theory: "#50E3C2", // Teal/Green
+        Speculative: "#9B9B9B", // Gray
+    };
+
+    // Filter data: hide speculative unless toggled
+    $: visibleData = computeData.filter(
+        (d) => showSpeculative || !d.is_speculative,
+    );
+
     // Separate data by category
-    $: historicalData = computeData.filter((d) => d.category === "Historical");
-    $: deepLearningData = computeData.filter(
+    $: historicalData = visibleData.filter((d) => d.category === "Historical");
+    $: deepLearningData = visibleData.filter(
         (d) => d.category === "Deep Learning",
+    );
+    $: theoryData = visibleData.filter((d) => d.category === "Theory");
+    $: speculativeData = visibleData.filter(
+        (d) => d.category === "Speculative",
     );
 
     // Tooltip state
@@ -217,6 +235,43 @@
                     stroke-width="2"
                     opacity="0.95"
                     class="data-point"
+                    on:mouseenter={(e) => handlePointEnter(point, e)}
+                    on:mouseleave={handlePointLeave}
+                    on:mousemove={updateMousePosition}
+                    on:click={(e) => handlePointClick(point, e)}
+                />
+            {/each}
+
+            <!-- Theory Data Points (Teal/Green) -->
+            {#each theoryData as point}
+                <circle
+                    cx={xScale(point.date_decimal)}
+                    cy={yScale(point.training_compute_flops)}
+                    r="7"
+                    fill="#50E3C2"
+                    stroke="#fff"
+                    stroke-width="2"
+                    opacity="0.9"
+                    class="data-point"
+                    on:mouseenter={(e) => handlePointEnter(point, e)}
+                    on:mouseleave={handlePointLeave}
+                    on:mousemove={updateMousePosition}
+                    on:click={(e) => handlePointClick(point, e)}
+                />
+            {/each}
+
+            <!-- Speculative Data Points (Gray, Dashed Border) -->
+            {#each speculativeData as point}
+                <circle
+                    cx={xScale(point.date_decimal)}
+                    cy={yScale(point.training_compute_flops)}
+                    r="9"
+                    fill="#9B9B9B"
+                    stroke="#fff"
+                    stroke-width="2"
+                    stroke-dasharray="3,3"
+                    opacity="0.85"
+                    class="data-point speculative"
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
