@@ -286,6 +286,7 @@
   },
   "active": "fbdd23e7dd0f3a47",
   "lastOpenFiles": [
+    "fix_analogies.cjs",
     "recalculate_analogies.js",
     "node_modules/reusify/tsconfig.json",
     "node_modules/email-addresses/package.json",
@@ -298,7 +299,6 @@
     "node_modules/email-addresses/test/email-addresses.js",
     "node_modules/email-addresses/test",
     "node_modules/graceful-fs/README.md",
-    "node_modules/commondir/readme.markdown",
     "node_modules/micromatch/node_modules/picomatch/README.md",
     "node_modules/micromatch/node_modules/picomatch/CHANGELOG.md",
     "node_modules/micromatch/README.md",

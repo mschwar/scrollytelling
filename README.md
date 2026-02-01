@@ -2,7 +2,7 @@
 
 > An interactive data visualization proving AI training compute broke Moore's Law in 2012.
 
-[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 ![Scrollytelling Demo](https://img.shields.io/badge/demo-scroll--driven-purple)
@@ -11,14 +11,15 @@
 
 ## 📊 The Story
 
-This visualization tells a data-driven story in four acts:
+This visualization tells a data-driven story in five acts:
 
 1. **The Anchor**: Establish 1 FLOP = 1 Human math problem per second
 2. **The Speed Limit**: Show Moore's Law as the "golden rule" (2× every 2 years)
 3. **The Break**: Reveal how AlexNet (2012) shattered that curve
 4. **The Scale**: Measure the magnitude (GPT-4 = 600 million human lifetimes)
+5. **The Credits**: Data sources, tech stack, and attribution
 
-As you scroll, the chart dynamically zooms to highlight each milestone, creating a visceral understanding of exponential scale.
+As you scroll, the chart dynamically zooms to highlight each milestone. **Interactive tooltips** reveal human-scale analogies ("600 million years"), and the **"Unzipper" animation** physically demonstrates the scale by shooting modern AI models off the screen.
 
 ---
 
@@ -58,7 +59,7 @@ Open **<http://localhost:5173>** in your browser.
 
 ### Component Hierarchy
 
-```
+```text
 App.svelte (State Orchestrator)
 ├── Background.svelte (Layer 0: Hardware silhouettes)
 ├── Chart.svelte (Layer 1: D3 SVG visualization)
@@ -68,7 +69,7 @@ App.svelte (State Orchestrator)
 
 ### Key Design Patterns
 
-**1. Reactive Domain Props**
+#### 1. Reactive Domain Props
 
 ```svelte
 // Chart.svelte
@@ -80,7 +81,7 @@ $: xScale = scaleLinear().domain(xDomain).range([0, innerWidth]);
 
 Enables animations without component reloads.
 
-**2. Tweened Store Interpolation**
+#### 2. Tweened Store Interpolation
 
 ```svelte
 // App.svelte
@@ -93,7 +94,7 @@ const yDomainTween = tweened([1e0, 1e27], {
 yDomainTween.set([1e3, 1e18]); // Smoothly animates
 ```
 
-**3. Three-Layer Z-Index Architecture**
+#### 3. Three-Layer Z-Index Architecture
 
 - **z-index 0**: Background (fixed, subtle icons)
 - **z-index 1**: Chart (sticky, remains visible)
@@ -103,7 +104,7 @@ yDomainTween.set([1e3, 1e18]); // Smoothly animates
 
 ## 📂 Project Structure
 
-```
+```text
 scrollytelling/
 ├── src/
 │   ├── components/
@@ -237,19 +238,28 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 - Glassmorphic narrative panels
 - Background silhouette fading
 
-### Phase 3 (Planned)
+### Phase 3 ✅ (v0.3.0)
 
-- [ ] Interactive tooltips with hardware analogies
-- [ ] Cost-based color gradient visualization
-- [ ] Mobile responsive optimizations
-- [ ] Performance profiling (< 60ms frame time)
+- Interactive tooltips with human scale analogies
+- Linear scale toggle ("unzip" the logarithmic compression)
+- Industrial futurism design system
+- Elastic mouse-following tooltip animations
+- Hover states and micro-animations
 
-### Phase 4 (Planned)
+### Phase 4 ✅ (v0.4.0)
 
-- [ ] Production deployment
-- [ ] SEO optimization
-- [ ] Accessibility audit (WCAG AA)
-- [ ] Analytics integration
+- Mobile responsive layout (40vh sticky chart)
+- Touch interaction system (tap-to-toggle tooltips)
+- Production deployment configuration
+- Credits footer with data sources
+- GitHub Pages ready builds
+
+### Phase 5 (Future)
+
+- [ ] Keyboard navigation for data points
+- [ ] ARIA live regions and screen reader support
+- [ ] Shareable URL states with query parameters
+- [ ] Accessibility audit (WCAG AA compliance)
 
 ---
 
@@ -322,7 +332,7 @@ MIT License - See [LICENSE](./LICENSE) file for details.
 
 ## 🐛 Known Issues
 
-- None in v0.2.0 (Phase 2 complete and verified)
+- None in v0.4.0 (Phase 4 complete and verified)
 
 ---
 
@@ -336,6 +346,6 @@ MIT License - See [LICENSE](./LICENSE) file for details.
 
 ---
 
-**Built with ❤️ using Svelte + D3.js**
+### Built with ❤️ using Svelte + D3.js
 
 For questions or feedback, open an issue on GitHub.

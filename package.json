@@ -1,7 +1,7 @@
 {
   "name": "scrollytelling",
   "version": "1.0.0",
-  "description": "",
+  "description": "Interactive scrollytelling visualization demonstrating AI compute's exponential growth beyond Moore's Law",
   "main": "index.js",
   "type": "module",
   "scripts": {

@@ -163,15 +163,36 @@
                     <strong>Visualization by:</strong> Built as a demonstration of
                     scrollytelling techniques
                 </p>
-                <p class="github-link">
-                    <a
-                        href="https://github.com/mschwar/scrollytelling"
-                        target="_blank"
-                        rel="noopener"
+                <div class="footer-links">
+                    <p class="github-link">
+                        <a
+                            href="https://github.com/mschwar/scrollytelling"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            View Source on GitHub →
+                        </a>
+                    </p>
+                    <button
+                        class="share-button"
+                        on:click={() => {
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: "AI Compute Phase Shift",
+                                    text: "Visualizing how AI training compute broke Moore's Law.",
+                                    url: window.location.href,
+                                });
+                            } else {
+                                navigator.clipboard.writeText(
+                                    window.location.href,
+                                );
+                                alert("URL copied to clipboard!");
+                            }
+                        }}
                     >
-                        View Source on GitHub →
-                    </a>
-                </p>
+                        Share Visualization 🔗
+                    </button>
+                </div>
             </div>
         </div>
     </div>

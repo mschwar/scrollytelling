@@ -17,6 +17,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced performance optimizations
 - Accessibility audit (WCAG AA compliance)
 
+## [1.0.0] - 2026-02-01
+
+### Phase 7: The "Unzipper" & Advanced Polish (Official Release)
+
+This major release marks the completion of the core visualization features, adding the dramatic "Unzipper" animation to visceralize exponential growth, enhanced tooltips, and speculative data visualization.
+
+#### Added
+
+**Experimental "Unzipper" Animation**
+
+- **The "Shoot-Off" Effect**: Toggling to linear scale now triggers a 6-second cinematic sequence.
+- **Physics**: Data points animate to their true linear positions (`tweened` domain transition).
+- **Pedagogical Impact**: Modern models (GPT-4, Gemini) instantly shoot off-screen, physically demonstrating the impossibility of plotting exponential growth on a static linear chart.
+- **Messaging**: "🚀 Off The Charts!" overlay appears to explain the phenomenon ("Taller than the moon").
+
+**Enhanced Tooltip System**
+
+- **Human Analogy Engine**: Recalculated formula (`FLOPs / 75 years`) now displays accurate metaphors (e.g., "600 million human lifetimes").
+- **Cost Estimates**: Added estimated training costs (e.g., "$100M-$200M") for modern models.
+- **Data Provenance**: Added source citations in tooltips.
+- **Speculative Warnings**: Clear "⚠️ Speculative Estimate" badges for future data points.
+
+**Speculative Data Visualization**
+
+- **Visual Markers**: Added ⚠️ warning icons directly to the chart for 2025-2027 estimates.
+- **Dashed Styling**: Speculative points use dashed borders (`stroke-dasharray="3,3"`) to distinguish from historical fact.
+- **Toggle Control**: Users can hide/show speculative data via a checkbox in Step 3.
+
+**Mobile Interaction Polish**
+
+- **Tap-to-Lock**: Tapping a point on mobile now "locks" the tooltip open.
+- **Smart Dismiss**: Tapping the background dismisses the active tooltip.
+- **Share Button**: Added Web Share API integration to the Credits section.
+
+### Phase 6: Data Expansion
+
+- **Dataset Growth**: Expanded from 8 to **35 milestones**.
+- **New Categories**: Added "Theory" (Teal) and "Speculative" (Gray) categories.
+- **Deep Dive**: Added key historical milestones (Perceptron 1958, Neocognitron 1980) and modern giants (Claude 3, PaLM).
+
+### Phase 5: Accessibility & Inclusion
+
+- **Keyboard Navigation**: Full Tab/Enter support for data points.
+- **Focus Indicators**: High-contrast purple focus rings (`outline: 3px solid #BD10E0`).
+- **Screen Reader Support**: ARIA labels on all SVG elements with rich descriptions.
+- **No-JS Fallback**: Added static PNG visualization for users without JavaScript.
+
 ---
 
 ## [0.4.0] - 2026-02-01

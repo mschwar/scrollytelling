@@ -112,6 +112,7 @@
     // Tooltip state
     let tooltipVisible = false;
     let tooltipData = null;
+    let persistentTooltip = false; // For mobile tap-to-lock
     let mouseX = 0;
     let mouseY = 0;
 
@@ -150,36 +151,58 @@
     }
 
     // Handle mouse leave (desktop)
+    // Handle mouse interactions with data points
+    function handlePointEnter(point, event) {
+        if (isMobile || persistentTooltip) return; // Ignore hover on mobile or if locked
+
+        tooltipData = point;
+        tooltipVisible = true;
+
+        // Position tooltip at the data point
+        const pointElement = event.target;
+        const rect = pointElement.getBoundingClientRect();
+        mouseX = rect.left + rect.width / 2;
+        mouseY = rect.top + rect.height / 2;
+    }
+
     function handlePointLeave() {
-        if (!isMobile) {
+        if (!persistentTooltip) {
             tooltipVisible = false;
             tooltipData = null;
         }
     }
 
-    // Handle click/tap on data point (mobile toggle)
     function handlePointClick(point, event) {
+        // Allow click to lock tooltip on desktop too, or just for mobile consistency
         if (isMobile) {
-            // Toggle tooltip on mobile
-            if (tooltipData?.id === point.id && tooltipVisible) {
-                // Same point clicked - close
+            event.stopPropagation(); // Prevent background click
+
+            // If clicking the same point that's already open/locked, close it
+            if (tooltipVisible && tooltipData && tooltipData.id === point.id) {
                 tooltipVisible = false;
                 tooltipData = null;
+                persistentTooltip = false;
             } else {
-                // New point clicked - show
+                // Open new point and lock it
                 tooltipData = point;
                 tooltipVisible = true;
-                updateMousePosition(event);
+                persistentTooltip = true;
+
+                // Position at point
+                const pointElement = event.target;
+                const rect = pointElement.getBoundingClientRect();
+                mouseX = rect.left + rect.width / 2;
+                mouseY = rect.top + rect.height / 2;
             }
-            event.stopPropagation(); // Prevent background click
         }
     }
 
-    // Close tooltip when clicking background (mobile)
+    // Close tooltip when clicking background
     function handleBackgroundClick() {
-        if (isMobile && tooltipVisible) {
+        if (tooltipVisible) {
             tooltipVisible = false;
             tooltipData = null;
+            persistentTooltip = false;
         }
     }
 
@@ -352,6 +375,16 @@
                     on:focus={(e) => handleDataPointFocus(point, e)}
                     on:blur={handlePointLeave}
                 />
+                <!-- Warning badge for speculative points -->
+                <text
+                    x={xScale(point.date_decimal)}
+                    y={yScale(point.training_compute_flops) - 15}
+                    text-anchor="middle"
+                    font-size="12"
+                    fill="#f59e0b"
+                    class="speculative-marker"
+                    style="pointer-events: none;">⚠️</text
+                >
             {/each}
 
             <!-- X-Axis -->
