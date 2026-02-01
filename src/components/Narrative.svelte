@@ -74,7 +74,12 @@
 
             <!-- The "Unzip" Toggle Button -->
             <div class="toggle-section">
-                <button class="unzip-button" on:click={toggleScale}>
+                <button
+                    class="unzip-button"
+                    on:click={toggleScale}
+                    accesskey="l"
+                    aria-label="Toggle between logarithmic and linear scale. Press L key as shortcut."
+                >
                     {isLinearMode
                         ? "📐 Return to Log Scale"
                         : "🔍 See True Scale (Linear)"}

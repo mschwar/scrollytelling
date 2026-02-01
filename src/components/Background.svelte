@@ -46,7 +46,16 @@
     }
 
     .silhouette.active {
-        opacity: 0.08; /* Very subtle, per style guide */
+        opacity: 0.08; /* Responsive: Reduce opacity on mobile */
+    }
+
+    @media (max-width: 768px) {
+        .silhouette.active {
+            opacity: 0.1; /* Increased for better visibility on high-res screens */
+        }
+        .icon {
+            font-size: 10rem;
+        }
     }
 
     .icon {

@@ -1,6 +1,7 @@
 <script>
     import { tweened } from "svelte/motion";
     import { cubicOut } from "svelte/easing";
+    import { onMount } from "svelte";
     import Background from "./components/Background.svelte";
     import Chart from "./components/Chart.svelte";
     import Scrolly from "./components/Scrolly.svelte";
@@ -16,6 +17,19 @@
     function handleToggleScale() {
         isLinearMode = !isLinearMode;
     }
+
+    // Global keyboard shortcut for scale toggle
+    onMount(() => {
+        window.addEventListener("keydown", (e) => {
+            // Only trigger if not in an input field
+            if (
+                (e.key === "l" || e.key === "L") &&
+                !e.target.matches("input, textarea")
+            ) {
+                handleToggleScale();
+            }
+        });
+    });
 
     // Tweened domain stores for smooth animations
     const xDomainTween = tweened([1900, 2026], {
