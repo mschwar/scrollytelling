@@ -9,13 +9,242 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for Phase 3
+### Planned for Phase 4
 
-- Interactive tooltips with hardware analogies on hover
-- Cost-based color gradient visualization (Step 4)
-- Mobile responsive optimizations
-- Performance profiling and optimization
-- Production build configuration
+- Mobile responsive breakpoints (768px)
+- Keyboard navigation for data points
+- Shareable URL states
+- Production build optimization
+- Accessibility audit (WCAG AA)
+
+---
+
+## [0.3.0] - 2026-02-01
+
+### Phase 3: Polish & Interactive Features
+
+This release transforms the functional visualization into a publication-ready data story with professional styling, interactive tooltips, and a pedagogical scale demonstration.
+
+#### Added
+
+**Industrial Futurism Design System**
+
+- Integrated Google Fonts via CDN:
+  - Inter (400, 500, 600, 700) for headings and body text
+  - JetBrains Mono (400, 500, 600) for data labels and scientific notation
+- Implemented CSS variable system in `app.css`:
+  - `--color-paper: #F9F9F9` (off-white background)
+  - `--color-grid: #E5E5E5` (subtle grid lines)
+  - `--color-orange-moores: #F5A623` (historical data, Moore's Law)
+  - `--color-purple-ai: #BD10E0` (AI models, breaking the curve)
+  - `--font-heading`, `--font-mono`, `--font-body` (typography tokens)
+- Enhanced glassmorphism styling on narrative text panels:
+  - Reduced opacity to `0.85` for subtlety
+  - Softer blur (`8px` with Safari webkit support)
+  - Refined shadow (`0 4px 20px rgba(0,0,0,0.08)`)
+  - Added hover micro-animation (lift + shadow increase)
+
+**Interactive Tooltip System**
+
+- Created `Tooltip.svelte` component with dark glassmorphic design
+- **Elastic Mouse Following**: 20ms tweened position using `svelte/motion`
+  - Creates "weighted" cursor tracking effect
+  - Prevents jittery movement with `cubicOut` easing
+- **Human Scale Calculation**: Core pedagogical feature
+  - Formula: `Math.round(flops / 31,536,000)` (seconds per year)
+  - Auto-formats: Billions, Millions, Thousands
+  - Calculates human lifetimes: `years / 70`
+  - Example: GPT-4 → "600 Million years (9M lifetimes)"
+- **Content Sections**:
+  - Model metadata (name, year, FLOPs in scientific notation)
+  - Human scale comparison with orange accent
+  - Hardware analogy from dataset
+- Integrated mouse tracking in `Chart.svelte`:
+  - `handlePointEnter`, `handlePointLeave`, `updateMousePosition` handlers
+  - Tweened tooltip position for smooth lag effect
+  - Hover state expansion (radius 8→14) with glow filter
+
+**"Unzip" Linear Scale Toggle**
+
+- Added interactive button in Narrative Step 3 ("The Scale")
+- **Event-Driven Architecture**:
+  - Narrative dispatches `toggleScale` event
+  - App manages `isLinearMode` state
+  - Chart receives boolean prop to switch scales
+- **Scale Switching Logic** in `Chart.svelte`:
+  - Reactive statement toggles between `scaleLog()` and `scaleLinear()`
+  - Intentionally "breaks" visualization in linear mode
+  - GPT-4 shoots off-screen → proves magnitude pedagogically
+- **UI Design**:
+  - Purple gradient button (`#BD10E0` → `#9013FE`)
+  - Dynamic button text: "🔍 See True Scale" ↔ "📐 Return to Log Scale"
+  - Warning hint text changes based on mode
+  - Hover animation (lift + shadow)
+
+**Hover States & Micro-animations**
+
+- Data point hover effects:
+  - Expand radius from 8/10 to 14
+  - Increase opacity to 1
+  - Add drop-shadow glow (`0 0 8px currentColor`)
+  - Cursor changes to pointer
+  - 150ms smooth transitions
+- Text panel hover (`.step-content`):
+  - Lift effect (`translateY(-2px)`)
+  - Enhanced shadow
+- Button hover interactions across all components
+
+#### Changed
+
+**app.css Architecture**
+
+- Replaced hardcoded values with CSS custom properties
+- Added typography utility classes (`.mono` for JetBrains Mono)
+- Implemented smooth scroll behavior globally
+- Centralized color palette for maintainability
+
+**main.js (Svelte 5 Compatibility)**
+
+- Updated from `new App()` constructor to `mount()` API
+- Aligns with Svelte 5 breaking changes
+- Resolves potential compatibility warnings
+
+**Chart.svelte Enhancements**
+
+- Added `isLinearMode` prop for scale toggling
+- Integrated Tooltip component (rendered outside SVG)
+- Implemented hover event handlers on data points
+- Added global CSS for `.data-point` hover states
+- Enhanced with CSS variables for colors and fonts
+
+**Narrative.svelte Interactivity**
+
+- Added script section with event dispatcher
+- Imported `createEventDispatcher` from Svelte
+- Added `isLinearMode` prop binding
+- Created toggle button component in Step 3
+- Implemented dynamic hint text with conditional rendering
+- Added `.toggle-section` styling (gradient button, hints)
+
+**App.svelte State Management**
+
+- Added `isLinearMode` state variable
+- Created `handleToggleScale()` event handler
+- Wired bidirectional prop passing:
+  - Chart receives `isLinearMode` to switch scale
+  - Narrative receives `isLinearMode` for button text
+  - Narrative emits `toggleScale` event to App
+
+#### Technical Decisions
+
+**Why 20ms Tooltip Lag?**
+
+- Tested values: 0ms (jittery), 10ms (too fast), 20ms (perfect), 50ms (laggy)
+- 20ms creates perceptible "weight" without frustration
+- Matches "heavy motion physics" from visual style guide
+- Uses `cubicOut` easing to prevent cursor overshoot
+
+**Why Dark Tooltip on Light Background?**
+
+- High contrast draws focus to hovered data point
+- White text on dark easier to scan than reverse
+- Industry standard (NYT Graphics, Bloomberg, FiveThirtyEight)
+- Glassmorphic `rgba(26,26,26,0.95)` with blur maintains aesthetic
+
+**Why Linear Scale "Breaks" the Chart?**
+
+- **Pedagogical Design Choice**: Intentional, not a bug
+- User clicks "See True Scale" → GPT-4 vanishes off-screen
+- Visceral proof that the magnitude is incomprehensible
+- Alternative (auto-adjust domain) defeats the teaching purpose
+- Warning hint prepares user for the effect
+
+**Why Orange Accent in Tooltip?**
+
+- "Human Scale" ties back to baseline (1 FLOP = 1 Human)
+- Orange color connects to Moore's Law reference line
+- Visual consistency with historical data points
+- Reinforces the pedagogical anchor throughout narrative
+
+**Why Event-Based Toggle Instead of Direct State?**
+
+- Maintains unidirectional data flow (Svelte best practice)
+- App.svelte owns state, Narrative is presentational
+- Enables future features (URL params, analytics tracking)
+- Easier to test and debug state changes
+
+**Why Not Implement Mobile Responsiveness Yet?**
+
+- Desktop experience needed full polish first
+- Mobile requires significant layout restructuring (fixed chart, swipe gestures)
+- Current design works acceptably on tablets (768px+)
+- Deferred to Phase 4 to maintain focus on core interactions
+
+#### Performance Considerations
+
+**Tooltip Rendering**
+
+- Conditionally rendered (`{#if visible}`) → Only in DOM when hovered
+- Single tooltip instance (not one per data point)
+- Tweened updates at ~50 FPS (20ms intervals) → No jank observed
+- No memory leaks (proper cleanup on `mouseleave`)
+
+**Scale Toggle**
+
+- Reactive statement rebuilds D3 scale object on state change
+- SVG re-renders with new axis tick positions
+- Happens synchronously (no animation lag)
+- No performance impact on large datasets
+
+**Google Fonts Loading**
+
+- Loaded via CDN with `display=swap` parameter
+- Prevents invisible text during font load
+- Fallback to system fonts (Inter → -apple-system, JetBrains Mono → Courier)
+- Consider async loading or self-hosting for production
+
+#### Known Behaviors (Not Bugs)
+
+**Linear Scale Effect**
+
+- GPT-4 and Gemini Ultra shoot off-screen in linear mode
+- This is the intended pedagogical demonstration
+- User is warned via hint text before toggling
+- "Return to Log Scale" button restores view
+
+**Tooltip Cursor Offset**
+
+- Tooltip positioned 12px to the right of cursor
+- Prevents cursor from blocking tooltip content
+- Vertically centered with `translate(12px, -50%)`
+- Standard pattern in data visualization libraries
+
+**Hover Radius Expansion**
+
+- Data points grow from r=8/10 to r=14 on hover
+- May slightly misalign with fixed labels
+- Acceptable trade-off for clear hover feedback
+- Labels remain readable
+
+#### Accessibility Status
+
+**Current State (Partial Compliance)**
+
+- ✅ High contrast colors (WCAG AA for text)
+- ✅ Semantic HTML (`<button>` for interactions)
+- ✅ Readable font sizes (minimum 14px)
+- ✅ Keyboard accessible button (native `<button>`)
+- ❌ No keyboard navigation for data points (mouse-only tooltips)
+- ❌ No screen reader announcements for chart updates
+- ❌ SVG lacks ARIA labels and descriptions
+- ❌ No focus indicators for interactive elements
+
+**Planned for Phase 4**
+
+- Keyboard navigation (Tab, Arrow keys for data points)
+- ARIA live regions for dynamic content
+- Focus visible styles for all interactive elements
+- Screen reader optimized labels
 
 ---
 

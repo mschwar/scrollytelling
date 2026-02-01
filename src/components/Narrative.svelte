@@ -1,5 +1,13 @@
 <script>
-    // No script needed - pure presentation
+    import { createEventDispatcher } from "svelte";
+
+    export let isLinearMode = false;
+
+    const dispatch = createEventDispatcher();
+
+    function toggleScale() {
+        dispatch("toggleScale");
+    }
 </script>
 
 <div class="narrative-container">
@@ -63,6 +71,24 @@
             <p class="highlight">
                 This is not a trend line. This is a phase shift.
             </p>
+
+            <!-- The "Unzip" Toggle Button -->
+            <div class="toggle-section">
+                <button class="unzip-button" on:click={toggleScale}>
+                    {isLinearMode
+                        ? "📐 Return to Log Scale"
+                        : "🔍 See True Scale (Linear)"}
+                </button>
+                <p class="toggle-hint">
+                    {#if isLinearMode}
+                        Linear scale shows the <em>actual</em> distances. GPT-4 shoots
+                        off the chart.
+                    {:else}
+                        Warning: Switching to linear scale will make top models
+                        disappear off-screen. This proves the magnitude.
+                    {/if}
+                </p>
+            </div>
         </div>
     </div>
 
@@ -94,12 +120,22 @@
         padding: 2rem 2.5rem;
         pointer-events: all; /* Re-enable for text boxes */
 
-        /* Glassmorphism styling per 04_Visual_Style_Guide */
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-left: 4px solid #333;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        /* Glassmorphism styling - Industrial Futurism per 04_Visual_Style_Guide */
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px); /* Safari support */
+        border-left: 4px solid var(--color-border-dark, #333);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         border-radius: 4px;
+
+        transition:
+            transform 200ms ease,
+            box-shadow 200ms ease;
+    }
+
+    .step-content:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
     }
 
     h2 {
@@ -146,6 +182,50 @@
         border-left: 3px solid #bd10e0;
         margin-top: 1rem;
         font-weight: 500;
+    }
+
+    /* Toggle Section Styling */
+    .toggle-section {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .unzip-button {
+        width: 100%;
+        padding: 0.875rem 1.5rem;
+        font-family: var(--font-heading, "Inter", sans-serif);
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        background: linear-gradient(135deg, #bd10e0 0%, #9013fe 100%);
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 200ms ease;
+        box-shadow: 0 2px 8px rgba(189, 16, 224, 0.3);
+    }
+
+    .unzip-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(189, 16, 224, 0.4);
+    }
+
+    .unzip-button:active {
+        transform: translateY(0);
+    }
+
+    .toggle-hint {
+        margin-top: 0.75rem;
+        font-size: 0.85rem;
+        color: #666;
+        line-height: 1.5;
+        font-style: italic;
+    }
+
+    .toggle-hint em {
+        color: #bd10e0;
+        font-weight: 600;
     }
 
     /* Responsive adjustments */

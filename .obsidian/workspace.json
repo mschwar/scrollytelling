@@ -286,6 +286,7 @@
   },
   "active": "fbdd23e7dd0f3a47",
   "lastOpenFiles": [
+    "src/components/Tooltip.svelte",
     "README.md",
     "save_checkpoint.bat",
     "CHANGELOG.md",
@@ -321,7 +322,6 @@
     "node_modules/delaunator/README.md",
     "node_modules/svelte/LICENSE.md",
     "node_modules/@esbuild/win32-x64/README.md",
-    "node_modules/axobject-query/README.md",
-    "node_modules/rollup/LICENSE.md"
+    "node_modules/axobject-query/README.md"
   ]
 }

@@ -9,6 +9,14 @@
     // Current scroll step (bound to Scrolly)
     let currentStep = 0;
 
+    // Linear scale toggle state
+    let isLinearMode = false;
+
+    // Handle toggle from Narrative component
+    function handleToggleScale() {
+        isLinearMode = !isLinearMode;
+    }
+
     // Tweened domain stores for smooth animations
     const xDomainTween = tweened([1900, 2026], {
         duration: 1200,
@@ -56,13 +64,13 @@
 
     <!-- Layer 1: Chart (D3 Visualization) - STICKY -->
     <div class="chart-layer">
-        <Chart xDomain={$xDomainTween} yDomain={$yDomainTween} />
+        <Chart xDomain={$xDomainTween} yDomain={$yDomainTween} {isLinearMode} />
     </div>
 
     <!-- Layer 2: Text (Scrollama Narrative) -->
     <div class="text-layer">
         <Scrolly bind:value={currentStep}>
-            <Narrative />
+            <Narrative {isLinearMode} on:toggleScale={handleToggleScale} />
         </Scrolly>
     </div>
 </main>

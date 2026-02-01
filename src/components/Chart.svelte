@@ -2,11 +2,15 @@
     import { onMount } from "svelte";
     import { scaleLog, scaleLinear } from "d3-scale";
     import { line } from "d3-shape";
+    import { tweened } from "svelte/motion";
+    import { cubicOut } from "svelte/easing";
     import computeData from "../data/compute_history.json";
+    import Tooltip from "./Tooltip.svelte";
 
     // Props for reactive domain control
     export let xDomain = [1900, 2026];
     export let yDomain = [1, 1e27];
+    export let isLinearMode = false; // Toggle between log/linear scale
 
     // Chart dimensions
     let width = 1200;
@@ -24,7 +28,10 @@
     // REACTIVE SCALES - Update when domain props change
     $: xScale = scaleLinear().domain(xDomain).range([0, innerWidth]);
 
-    $: yScale = scaleLog().domain(yDomain).range([innerHeight, 0]).nice();
+    // Toggle between log and linear scale
+    $: yScale = isLinearMode
+        ? scaleLinear().domain(yDomain).range([innerHeight, 0]).nice()
+        : scaleLog().domain(yDomain).range([innerHeight, 0]).nice();
 
     // Generate Moore's Law line data (2x every 2 years from 2012)
     $: mooresLawData = (() => {
@@ -83,6 +90,38 @@
     $: deepLearningData = computeData.filter(
         (d) => d.category === "Deep Learning",
     );
+
+    // Tooltip state
+    let tooltipVisible = false;
+    let tooltipData = null;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    // Tweened tooltip position for elastic lag (20ms delay effect)
+    const tooltipX = tweened(0, { duration: 20, easing: cubicOut });
+    const tooltipY = tweened(0, { duration: 20, easing: cubicOut });
+
+    $: tooltipX.set(mouseX);
+    $: tooltipY.set(mouseY);
+
+    // Handle mouse enter on data point
+    function handlePointEnter(point, event) {
+        tooltipData = point;
+        tooltipVisible = true;
+        updateMousePosition(event);
+    }
+
+    // Handle mouse leave
+    function handlePointLeave() {
+        tooltipVisible = false;
+        tooltipData = null;
+    }
+
+    // Update mouse position
+    function updateMousePosition(event) {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    }
 </script>
 
 <div class="chart-container">
@@ -120,6 +159,10 @@
                     stroke="#fff"
                     stroke-width="2"
                     opacity="0.9"
+                    class="data-point"
+                    on:mouseenter={(e) => handlePointEnter(point, e)}
+                    on:mouseleave={handlePointLeave}
+                    on:mousemove={updateMousePosition}
                 />
             {/each}
 
@@ -133,6 +176,10 @@
                     stroke="#fff"
                     stroke-width="2"
                     opacity="0.95"
+                    class="data-point"
+                    on:mouseenter={(e) => handlePointEnter(point, e)}
+                    on:mouseleave={handlePointLeave}
+                    on:mousemove={updateMousePosition}
                 />
             {/each}
 
@@ -287,6 +334,14 @@
     </svg>
 </div>
 
+<!-- Tooltip (rendered outside SVG for proper positioning) -->
+<Tooltip
+    visible={tooltipVisible}
+    x={$tooltipX}
+    y={$tooltipY}
+    data={tooltipData}
+/>
+
 <style>
     .chart-container {
         width: 100%;
@@ -294,18 +349,27 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #f9f9f9;
-        font-family:
-            "Inter",
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
+        background-color: var(--color-paper, #f9f9f9);
+        font-family: var(--font-body, "Inter", sans-serif);
     }
 
     svg {
         background-color: white;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
+    }
+
+    /* Data point hover states */
+    :global(.data-point) {
+        cursor: pointer;
+        transition:
+            r 150ms ease,
+            opacity 150ms ease;
+    }
+
+    :global(.data-point:hover) {
+        r: 14;
+        opacity: 1 !important;
+        filter: drop-shadow(0 0 8px currentColor);
     }
 </style>
