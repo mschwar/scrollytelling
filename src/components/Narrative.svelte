@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let isLinearMode = false;
-    export let showSpeculative = false;
+    export let showSpeculative = true; // Show by default
 
     const dispatch = createEventDispatcher();
 
@@ -165,7 +165,7 @@
                 </p>
                 <p class="github-link">
                     <a
-                        href="https://github.com/yourusername/scrollytelling"
+                        href="https://github.com/mschwar/scrollytelling"
                         target="_blank"
                         rel="noopener"
                     >

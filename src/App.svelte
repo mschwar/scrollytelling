@@ -13,8 +13,8 @@
     // Linear scale toggle state
     let isLinearMode = false;
 
-    // Speculative data toggle state
-    let showSpeculative = false;
+    // Speculative data toggle state (show by default for visibility)
+    let showSpeculative = true;
 
     // Handle toggle from Narrative component
     function handleToggleScale() {
