@@ -92,6 +92,62 @@
         </div>
     </div>
 
+    <!-- Step 4: Credits & Sources -->
+    <div class="step">
+        <div class="step-content credits">
+            <h2>Built With Data</h2>
+            <p class="lead">Sources & Credits</p>
+
+            <div class="credits-section">
+                <h3>Data Sources</h3>
+                <ul>
+                    <li>
+                        <a
+                            href="https://epochai.org/"
+                            target="_blank"
+                            rel="noopener">Epoch AI</a
+                        > – ML compute dataset
+                    </li>
+                    <li>
+                        <a
+                            href="https://ourworldindata.org/technological-progress"
+                            target="_blank"
+                            rel="noopener">Our World in Data</a
+                        > – Historical compute benchmarks
+                    </li>
+                </ul>
+            </div>
+
+            <div class="credits-section">
+                <h3>Technology Stack</h3>
+                <ul>
+                    <li><strong>Svelte 5</strong> – Reactive UI framework</li>
+                    <li><strong>D3.js v7</strong> – Data visualization</li>
+                    <li>
+                        <strong>Scrollama</strong> – Scroll-driven narratives
+                    </li>
+                    <li><strong>Vite</strong> – Build tool</li>
+                </ul>
+            </div>
+
+            <div class="credits-section">
+                <p class="author">
+                    <strong>Visualization by:</strong> Built as a demonstration of
+                    scrollytelling techniques
+                </p>
+                <p class="github-link">
+                    <a
+                        href="https://github.com/yourusername/scrollytelling"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        View Source on GitHub →
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Spacer to allow scrolling past last step -->
     <div class="step spacer"></div>
 </div>
@@ -228,6 +284,73 @@
         font-weight: 600;
     }
 
+    /* Credits Section Styling */
+    .credits {
+        background: rgba(255, 255, 255, 0.95);
+        max-width: 600px;
+    }
+
+    .credits h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.75rem 0;
+        color: var(--color-text-primary, #1a1a1a);
+    }
+
+    .credits-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .credits-section ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .credits-section li {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .credits-section a {
+        color: var(--color-purple-ai, #bd10e0);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 150ms ease;
+    }
+
+    .credits-section a:hover {
+        color: var(--color-orange-moores, #f5a623);
+        text-decoration: underline;
+    }
+
+    .author {
+        font-size: 0.95rem;
+        margin: 1rem 0 0.5rem 0;
+    }
+
+    .github-link {
+        margin-top: 0.5rem;
+    }
+
+    .github-link a {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: rgba(189, 16, 224, 0.1);
+        border: 1px solid var(--color-purple-ai, #bd10e0);
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 150ms ease;
+    }
+
+    .github-link a:hover {
+        background: var(--color-purple-ai, #bd10e0);
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .step {
@@ -244,6 +367,14 @@
 
         .lead {
             font-size: 1.1rem;
+        }
+
+        .credits {
+            max-width: 100%;
+        }
+
+        .credits h3 {
+            font-size: 1rem;
         }
     }
 </style>

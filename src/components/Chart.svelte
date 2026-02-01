@@ -97,6 +97,15 @@
     let mouseX = 0;
     let mouseY = 0;
 
+    // Detect mobile vs desktop
+    let isMobile = false;
+    onMount(() => {
+        isMobile = window.innerWidth < 768;
+        window.addEventListener("resize", () => {
+            isMobile = window.innerWidth < 768;
+        });
+    });
+
     // Tweened tooltip position for elastic lag (20ms delay effect)
     const tooltipX = tweened(0, { duration: 20, easing: cubicOut });
     const tooltipY = tweened(0, { duration: 20, easing: cubicOut });
@@ -104,17 +113,47 @@
     $: tooltipX.set(mouseX);
     $: tooltipY.set(mouseY);
 
-    // Handle mouse enter on data point
+    // Handle mouse enter on data point (desktop hover)
     function handlePointEnter(point, event) {
-        tooltipData = point;
-        tooltipVisible = true;
-        updateMousePosition(event);
+        if (!isMobile) {
+            tooltipData = point;
+            tooltipVisible = true;
+            updateMousePosition(event);
+        }
     }
 
-    // Handle mouse leave
+    // Handle mouse leave (desktop)
     function handlePointLeave() {
-        tooltipVisible = false;
-        tooltipData = null;
+        if (!isMobile) {
+            tooltipVisible = false;
+            tooltipData = null;
+        }
+    }
+
+    // Handle click/tap on data point (mobile toggle)
+    function handlePointClick(point, event) {
+        if (isMobile) {
+            // Toggle tooltip on mobile
+            if (tooltipData?.id === point.id && tooltipVisible) {
+                // Same point clicked - close
+                tooltipVisible = false;
+                tooltipData = null;
+            } else {
+                // New point clicked - show
+                tooltipData = point;
+                tooltipVisible = true;
+                updateMousePosition(event);
+            }
+            event.stopPropagation(); // Prevent background click
+        }
+    }
+
+    // Close tooltip when clicking background (mobile)
+    function handleBackgroundClick() {
+        if (isMobile && tooltipVisible) {
+            tooltipVisible = false;
+            tooltipData = null;
+        }
     }
 
     // Update mouse position
@@ -124,7 +163,7 @@
     }
 </script>
 
-<div class="chart-container">
+<div class="chart-container" on:click={handleBackgroundClick}>
     <svg {width} {height}>
         <g transform={`translate(${margin.left},${margin.top})`}>
             <!-- Grid lines -->
@@ -163,6 +202,7 @@
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
+                    on:click={(e) => handlePointClick(point, e)}
                 />
             {/each}
 
@@ -180,6 +220,7 @@
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
+                    on:click={(e) => handlePointClick(point, e)}
                 />
             {/each}
 

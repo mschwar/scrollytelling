@@ -108,4 +108,22 @@
         z-index: 2;
         pointer-events: none; /* Allow clicks through to chart for tooltips */
     }
+
+    /* Mobile Responsiveness - Stack Layout */
+    @media (max-width: 768px) {
+        /* Chart: Sticky at top, reduced height */
+        .chart-layer {
+            position: sticky;
+            top: 0;
+            height: 40vh; /* Reduced from 100vh */
+            z-index: 1;
+        }
+
+        /* Text: Scrolls underneath chart */
+        .text-layer {
+            position: relative;
+            z-index: 2;
+            /* Ensure panels have enough opacity to be readable */
+        }
+    }
 </style>
