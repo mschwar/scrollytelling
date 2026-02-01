@@ -1,0 +1,90 @@
+[
+    {
+        "id": "human-baseline",
+        "name": "The Human",
+        "organization": "Baseline",
+        "date_decimal": 1900.0,
+        "training_compute_flops": 1,
+        "training_cost_usd": 0,
+        "category": "Historical",
+        "hardware_analogy": "One Math Problem",
+        "is_highlight": true
+    },
+    {
+        "id": "eniac",
+        "name": "ENIAC",
+        "organization": "US Army",
+        "date_decimal": 1945.9,
+        "training_compute_flops": 1e5,
+        "training_cost_usd": 6000000,
+        "category": "Historical",
+        "hardware_analogy": "Vacuum Tube Room",
+        "is_highlight": true
+    },
+    {
+        "id": "intel-486",
+        "name": "Intel 486",
+        "organization": "Intel",
+        "date_decimal": 1989.0,
+        "training_compute_flops": 1e8,
+        "training_cost_usd": 1000000,
+        "category": "Historical",
+        "hardware_analogy": "Desktop PC",
+        "is_highlight": true
+    },
+    {
+        "id": "deep-blue",
+        "name": "Deep Blue",
+        "organization": "IBM",
+        "date_decimal": 1997.0,
+        "training_compute_flops": 1e12,
+        "training_cost_usd": 10000000,
+        "category": "Historical",
+        "hardware_analogy": "Chess Supercomputer",
+        "is_highlight": true
+    },
+    {
+        "id": "alexnet",
+        "name": "AlexNet",
+        "organization": "University of Toronto",
+        "date_decimal": 2012.0,
+        "training_compute_flops": 1e18,
+        "training_cost_usd": 5000,
+        "category": "Deep Learning",
+        "hardware_analogy": "GPU Cluster",
+        "is_highlight": true
+    },
+    {
+        "id": "alphago",
+        "name": "AlphaGo",
+        "organization": "DeepMind",
+        "date_decimal": 2016.0,
+        "training_compute_flops": 1e23,
+        "training_cost_usd": 35000000,
+        "category": "Deep Learning",
+        "hardware_analogy": "Data Center",
+        "is_highlight": true
+    },
+    {
+        "id": "gpt-4",
+        "name": "GPT-4",
+        "organization": "OpenAI",
+        "date_decimal": 2023.25,
+        "training_compute_flops": 2e25,
+        "training_cost_usd": 100000000,
+        "category": "Deep Learning",
+        "hardware_analogy": "The Galaxy",
+        "is_highlight": true
+    },
+    {
+        "id": "gemini-ultra",
+        "name": "Gemini Ultra",
+        "organization": "Google DeepMind",
+        "date_decimal": 2024.0,
+        "training_compute_flops": 5e25,
+        "training_cost_usd": 150000000,
+        "category": "Deep Learning",
+        "hardware_analogy": "Beyond Comprehension",
+        "is_highlight": true
+    }
+]

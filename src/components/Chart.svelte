@@ -1,0 +1,311 @@
+<script>
+    import { onMount } from "svelte";
+    import { scaleLog, scaleLinear } from "d3-scale";
+    import { line } from "d3-shape";
+    import computeData from "../data/compute_history.json";
+
+    // Props for reactive domain control
+    export let xDomain = [1900, 2026];
+    export let yDomain = [1, 1e27];
+
+    // Chart dimensions
+    let width = 1200;
+    let height = 700;
+    const margin = { top: 40, right: 60, bottom: 60, left: 100 };
+
+    // Computed dimensions
+    $: innerWidth = width - margin.left - margin.right;
+    $: innerHeight = height - margin.top - margin.bottom;
+
+    // Constants for Moore's Law calculation
+    const MOORES_LAW_ANCHOR_YEAR = 2012;
+    const ALEXNET_FLOPS = 1e18; // AlexNet as anchor point
+
+    // REACTIVE SCALES - Update when domain props change
+    $: xScale = scaleLinear().domain(xDomain).range([0, innerWidth]);
+
+    $: yScale = scaleLog().domain(yDomain).range([innerHeight, 0]).nice();
+
+    // Generate Moore's Law line data (2x every 2 years from 2012)
+    $: mooresLawData = (() => {
+        const points = [];
+        const [minYear, maxYear] = xDomain;
+        for (
+            let year = Math.floor(minYear);
+            year <= Math.ceil(maxYear);
+            year += 1
+        ) {
+            const yearsFromAnchor = year - MOORES_LAW_ANCHOR_YEAR;
+            const flops = ALEXNET_FLOPS * Math.pow(2, yearsFromAnchor / 2);
+            points.push({ year, flops });
+        }
+        return points;
+    })();
+
+    // Create line generator for Moore's Law
+    $: mooresLawLine = line()
+        .x((d) => xScale(d.year))
+        .y((d) => yScale(d.flops));
+
+    // Y-axis tick values (powers of 10) - dynamically based on domain
+    $: yTicks = (() => {
+        const [min, max] = yDomain;
+        const minExp = Math.ceil(Math.log10(min));
+        const maxExp = Math.floor(Math.log10(max));
+        const ticks = [];
+        for (let exp = minExp; exp <= maxExp; exp += 5) {
+            ticks.push(Math.pow(10, exp));
+        }
+        return ticks;
+    })();
+
+    // X-axis tick values - dynamically based on domain
+    $: xTicks = (() => {
+        const [min, max] = xDomain;
+        const range = max - min;
+        const step = range > 50 ? 20 : 10;
+        const ticks = [];
+        const start = Math.ceil(min / step) * step;
+        for (let year = start; year <= max; year += step) {
+            ticks.push(year);
+        }
+        return ticks;
+    })();
+
+    // Format large numbers for Y-axis
+    function formatFlops(value) {
+        const exponent = Math.log10(value);
+        return `10^${Math.round(exponent)}`;
+    }
+
+    // Separate data by category
+    $: historicalData = computeData.filter((d) => d.category === "Historical");
+    $: deepLearningData = computeData.filter(
+        (d) => d.category === "Deep Learning",
+    );
+</script>
+
+<div class="chart-container">
+    <svg {width} {height}>
+        <g transform={`translate(${margin.left},${margin.top})`}>
+            <!-- Grid lines -->
+            {#each yTicks as tick}
+                <line
+                    x1={0}
+                    y1={yScale(tick)}
+                    x2={innerWidth}
+                    y2={yScale(tick)}
+                    stroke="#E5E5E5"
+                    stroke-width="1"
+                />
+            {/each}
+
+            <!-- Moore's Law Line (Orange, Dashed) -->
+            <path
+                d={mooresLawLine(mooresLawData)}
+                fill="none"
+                stroke="#F5A623"
+                stroke-width="3"
+                stroke-dasharray="8,4"
+                opacity="0.8"
+            />
+
+            <!-- Historical Data Points (Orange) -->
+            {#each historicalData as point}
+                <circle
+                    cx={xScale(point.date_decimal)}
+                    cy={yScale(point.training_compute_flops)}
+                    r="8"
+                    fill="#F5A623"
+                    stroke="#fff"
+                    stroke-width="2"
+                    opacity="0.9"
+                />
+            {/each}
+
+            <!-- Deep Learning Data Points (Purple) -->
+            {#each deepLearningData as point}
+                <circle
+                    cx={xScale(point.date_decimal)}
+                    cy={yScale(point.training_compute_flops)}
+                    r="10"
+                    fill="#BD10E0"
+                    stroke="#fff"
+                    stroke-width="2"
+                    opacity="0.95"
+                />
+            {/each}
+
+            <!-- X-Axis -->
+            <g transform={`translate(0,${innerHeight})`}>
+                <line
+                    x1={0}
+                    y1={0}
+                    x2={innerWidth}
+                    y2={0}
+                    stroke="#333"
+                    stroke-width="2"
+                />
+
+                {#each xTicks as tick}
+                    <g transform={`translate(${xScale(tick)},0)`}>
+                        <line y1={0} y2={6} stroke="#333" stroke-width="2" />
+                        <text
+                            y={25}
+                            text-anchor="middle"
+                            font-family="Inter, sans-serif"
+                            font-size="14"
+                            fill="#333"
+                        >
+                            {tick}
+                        </text>
+                    </g>
+                {/each}
+
+                <!-- X-Axis Label -->
+                <text
+                    x={innerWidth / 2}
+                    y={50}
+                    text-anchor="middle"
+                    font-family="Inter, sans-serif"
+                    font-size="16"
+                    font-weight="600"
+                    fill="#333"
+                >
+                    Year
+                </text>
+            </g>
+
+            <!-- Y-Axis -->
+            <g>
+                <line
+                    x1={0}
+                    y1={0}
+                    x2={0}
+                    y2={innerHeight}
+                    stroke="#333"
+                    stroke-width="2"
+                />
+
+                {#each yTicks as tick}
+                    <g transform={`translate(0,${yScale(tick)})`}>
+                        <line
+                            x1={-6}
+                            y1={0}
+                            x2={0}
+                            y2={0}
+                            stroke="#333"
+                            stroke-width="2"
+                        />
+                        <text
+                            x={-10}
+                            y={5}
+                            text-anchor="end"
+                            font-family="JetBrains Mono, monospace"
+                            font-size="13"
+                            fill="#333"
+                        >
+                            {@html formatFlops(tick)}
+                        </text>
+                    </g>
+                {/each}
+
+                <!-- Y-Axis Label -->
+                <text
+                    x={-innerHeight / 2}
+                    y={-70}
+                    text-anchor="middle"
+                    font-family="Inter, sans-serif"
+                    font-size="16"
+                    font-weight="600"
+                    fill="#333"
+                    transform="rotate(-90)"
+                >
+                    Training Compute (FLOPs)
+                </text>
+            </g>
+
+            <!-- Legend -->
+            <g transform={`translate(${innerWidth - 200},20)`}>
+                <!-- Moore's Law -->
+                <line
+                    x1={0}
+                    y1={0}
+                    x2={40}
+                    y2={0}
+                    stroke="#F5A623"
+                    stroke-width="3"
+                    stroke-dasharray="8,4"
+                />
+                <text
+                    x={50}
+                    y={5}
+                    font-family="Inter, sans-serif"
+                    font-size="14"
+                    fill="#333"
+                >
+                    Moore's Law
+                </text>
+
+                <!-- AI Models -->
+                <circle
+                    cx={20}
+                    cy={30}
+                    r="8"
+                    fill="#BD10E0"
+                    stroke="#fff"
+                    stroke-width="2"
+                />
+                <text
+                    x={50}
+                    y={35}
+                    font-family="Inter, sans-serif"
+                    font-size="14"
+                    fill="#333"
+                >
+                    AI Models
+                </text>
+            </g>
+
+            <!-- Labels for highlighted points -->
+            {#each computeData.filter((d) => d.is_highlight) as point}
+                <text
+                    x={xScale(point.date_decimal)}
+                    y={yScale(point.training_compute_flops) - 15}
+                    text-anchor="middle"
+                    font-family="Inter, sans-serif"
+                    font-size="12"
+                    font-weight="600"
+                    fill={point.category === "Historical"
+                        ? "#F5A623"
+                        : "#BD10E0"}
+                >
+                    {point.name}
+                </text>
+            {/each}
+        </g>
+    </svg>
+</div>
+
+<style>
+    .chart-container {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f9f9f9;
+        font-family:
+            "Inter",
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
+    }
+
+    svg {
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+</style>
