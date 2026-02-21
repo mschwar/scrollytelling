@@ -12,7 +12,7 @@ The application will load a single static JSON file (compute_history.json). We a
 - **Source:** The data is a composite of historical records (Epoch AI, Our World in Data) and manually curated "Anchor Points."
     
 - **Parsing:** Dates must be parsed as decimal years (e.g., 2023.25 for April 2023) to allow precise plotting on the X-Axis.
-    
+    blah blah blah
 
 ---
 
