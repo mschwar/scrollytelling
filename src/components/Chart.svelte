@@ -141,16 +141,6 @@
     $: tooltipX.set(mouseX);
     $: tooltipY.set(mouseY);
 
-    // Handle mouse enter on data point (desktop hover)
-    function handlePointEnter(point, event) {
-        if (!isMobile) {
-            tooltipData = point;
-            tooltipVisible = true;
-            updateMousePosition(event);
-        }
-    }
-
-    // Handle mouse leave (desktop)
     // Handle mouse interactions with data points
     function handlePointEnter(point, event) {
         if (isMobile || persistentTooltip) return; // Ignore hover on mobile or if locked
