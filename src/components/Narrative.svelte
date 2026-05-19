@@ -13,14 +13,14 @@
         "The Speed Limit",
         "The Break",
         "The Scale",
-        "Built With Data",
+        "Provenance & Credits",
     ];
     const STEP_SUMMARIES = [
         "1 FLOP = 1 Human Math Problem.",
         "Moore's Law: The Golden Rule.",
         "Deep Learning Leaves the Line.",
         "Unzipping the Logarithmic Scale.",
-        "Sources & Credits.",
+        "Historical records and speculative estimates.",
     ];
 
     $: activeStepIndex = Math.max(
