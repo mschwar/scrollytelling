@@ -108,6 +108,7 @@ async function main() {
     'README.md',
     'AGENTS.md',
     'CURRENT_STATE.md',
+    'docs/agentic-overhaul/two-prompt-loop-plan.md',
     'index.html',
     'vite.config.js',
     'svelte.config.js',

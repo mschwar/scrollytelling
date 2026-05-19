@@ -11,6 +11,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The app boots as a Svelte 5 client with `src/main.js` mounting `src/App.svelte`.
 - The repo contains the expected narrative components, data file, and fallback asset.
 - The new validation script runs locally and checks repo structure plus the compute dataset.
+- The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands
 
@@ -54,3 +55,4 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 2. Add a minimal test or smoke harness if the interaction surface grows again.
 3. Consider tightening provenance notes for speculative dataset entries.
 4. Revisit whether `intersection-observer` can be removed now that modern browsers support the native API.
+5. Work the feature queue in `docs/agentic-overhaul/two-prompt-loop-plan.md` one branch and one PR at a time.
