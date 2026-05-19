@@ -17,6 +17,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - Browser QA of the Provenance & Credits view passed in headless Chromium against the built app, including the speculative toggle state and screenshots confirming the grouped historical/speculative summary cards and reference links.
 - The chart handoff button now responds to click, Enter, and Space so keyboard users can move into the chart consistently.
 - The Credits step now groups source labels into historical records and speculative estimates for provenance review.
+- GitHub Actions now auto-deploys the built site to GitHub Pages from pushes to `main`.
 - The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands
@@ -26,7 +27,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - `npm run preview` - available, not run during this audit.
 - `npm run validate` - added in this pass and passed.
 - `npm run verify:url-state` - available for non-UI verification of the story-state helpers.
-- `npm run deploy` - exists, not exercised here.
+- `npm run deploy` - legacy manual fallback still exists, but the normal publish path is now GitHub Actions auto-deploy on `main`.
 
 ## Important Files And Directories
 
@@ -48,6 +49,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - `package.json` declared `ISC` while the README previously advertised MIT and linked a missing `LICENSE` file.
 - The README and changelog contain phase/version claims that read like release notes; they should not be treated as a live product roadmap.
 - `index.html` previously referenced the Vite starter favicon, which was not present in the repo.
+- The public GitHub Pages site was previously serving source files directly; the repo now uses a workflow-driven Pages deploy instead.
 
 ## Known Risks
 
@@ -63,4 +65,4 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 2. Add a minimal test or smoke harness if the interaction surface grows again.
 3. Consider tightening provenance notes for speculative dataset entries.
 4. Revisit whether `intersection-observer` can be removed now that modern browsers support the native API.
-5. Work the feature queue in `docs/agentic-overhaul/two-prompt-loop-plan.md` one branch and one PR at a time.
+5. Keep an eye on the Pages workflow runs after future pushes to `main`.

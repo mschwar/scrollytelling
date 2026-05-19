@@ -24,6 +24,8 @@ As you scroll, the chart dynamically zooms to highlight each milestone. **Intera
 
 The current story state is shareable through the URL. `step`, `linear`, and `speculative` are encoded in the query string so a copied link reopens the same view.
 
+The production site auto-deploys from pushes to `main` through GitHub Actions and is published at <https://mschwar.github.io/scrollytelling/>.
+
 ---
 
 ## 🚀 Quick Start
@@ -223,6 +225,14 @@ Enable Scrollama visual debugger:
 - `Enter` or `Space` keeps the current point open, and `Escape` clears the
   tooltip.
 - The `L` shortcut still toggles the linear scale outside editable fields.
+
+## 🚢 Deployment
+
+GitHub Actions builds and deploys the production site automatically on pushes to `main`.
+
+- Production URL: <https://mschwar.github.io/scrollytelling/>
+- Build command: `npm run build`
+- Local production preview: `npm run preview`
 
 ---
 

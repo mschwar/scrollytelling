@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SVG data points are explicitly focusable so chart navigation is more consistent across browsers.
 - The `Jump to Data Points` handoff button now accepts Enter and Space as well as click.
 - The Credits step now groups source labels into historical records and speculative estimates so provenance can be reviewed without raw JSON.
+- GitHub Pages now auto-deploys from pushes to `main` through GitHub Actions, replacing the manual publish step.
 
 ### Planned for Phase 5 (Future)
 
