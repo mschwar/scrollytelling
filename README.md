@@ -211,9 +211,10 @@ Enable Scrollama visual debugger:
 
 ### Keyboard Navigation
 
-- Tab moves into the chart through the first visible data point.
-- Use the `Jump to Data Points` button in the Scale panel to hand keyboard
-  focus from the narrative into the chart.
+- Tab reaches the Scale panel controls, then `Jump to Data Points` hands
+  keyboard focus into the chart.
+- It is the explicit entry point for keyboard users moving from the narrative
+  into the chart.
 - Use `Arrow Left` / `Arrow Right` or `Arrow Up` / `Arrow Down` to move
   between data points once focus is in the chart.
 - `Home` and `End` jump to the first or last visible point.
@@ -281,8 +282,18 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 ### Phase 5 (Future)
 
 - [x] Keyboard navigation for data points
-- [ ] ARIA live regions and screen reader support
+- [x] ARIA live regions and screen reader support
 - [ ] Accessibility audit (WCAG AA compliance)
+
+### Screen Reader Support
+
+- The current story step is announced through a polite live region.
+- The chart announces focused data points and state changes as you move
+  through the visualization.
+- SVG data points are explicitly focusable so keyboard users can land on the
+  chart consistently across browsers.
+- The active narrative panel is marked with `aria-current="step"` so screen
+  readers can track the story position.
 
 ### Shareable Story State
 

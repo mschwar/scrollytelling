@@ -484,6 +484,7 @@
                     class="data-point"
                     data-point-id={point.id}
                     tabindex={point.id === activePointId ? "0" : "-1"}
+                    focusable="true"
                     role="button"
                     aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
@@ -509,6 +510,7 @@
                     class="data-point"
                     data-point-id={point.id}
                     tabindex={point.id === activePointId ? "0" : "-1"}
+                    focusable="true"
                     role="button"
                     aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
@@ -534,6 +536,7 @@
                     class="data-point"
                     data-point-id={point.id}
                     tabindex={point.id === activePointId ? "0" : "-1"}
+                    focusable="true"
                     role="button"
                     aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
@@ -560,6 +563,7 @@
                     class="data-point speculative"
                     data-point-id={point.id}
                     tabindex={point.id === activePointId ? "0" : "-1"}
+                    focusable="true"
                     role="button"
                     aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}

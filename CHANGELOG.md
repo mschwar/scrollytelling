@@ -13,10 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - URL query parameters now preserve the active scroll step, linear toggle, and speculative data toggle so the current story state can be reloaded or shared directly.
 - Keyboard navigation now hands focus from the narrative into the chart and supports arrow-key traversal across visible data points.
+- Screen reader live regions now announce the active story step and chart state changes.
+- SVG data points are explicitly focusable so chart navigation is more consistent across browsers.
 
 ### Planned for Phase 5 (Future)
 
-- ARIA live regions and screen reader support
 - Advanced performance optimizations
 - Accessibility audit (WCAG AA compliance)
 

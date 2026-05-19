@@ -218,6 +218,7 @@
     <div class="text-layer">
         <Scrolly bind:value={currentStep}>
             <Narrative
+                {currentStep}
                 {isLinearMode}
                 on:toggleScale={handleToggleScale}
                 on:focusChart={handleFocusChart}

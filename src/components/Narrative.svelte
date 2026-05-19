@@ -1,10 +1,41 @@
 <script>
     import { createEventDispatcher } from "svelte";
 
+    export let currentStep = 0;
     export let isLinearMode = false;
     export let showSpeculative = true; // Show by default
 
     const dispatch = createEventDispatcher();
+    const STEP_TITLES = [
+        "The Anchor",
+        "The Speed Limit",
+        "The Break",
+        "The Scale",
+        "Built With Data",
+    ];
+    const STEP_SUMMARIES = [
+        "1 FLOP = 1 Human Math Problem.",
+        "Moore's Law: The Golden Rule.",
+        "Deep Learning Leaves the Line.",
+        "Unzipping the Logarithmic Scale.",
+        "Sources & Credits.",
+    ];
+
+    $: activeStepIndex = Math.max(
+        0,
+        Math.min(
+            Number.isFinite(currentStep) ? Math.trunc(currentStep) : 0,
+            STEP_TITLES.length - 1,
+        ),
+    );
+    $: stepAnnouncement = [
+        `Step ${activeStepIndex + 1} of ${STEP_TITLES.length}: ${STEP_TITLES[activeStepIndex]}.`,
+        STEP_SUMMARIES[activeStepIndex],
+        isLinearMode ? "Linear scale is active." : "Log scale is active.",
+        showSpeculative
+            ? "Speculative data is visible."
+            : "Speculative data is hidden.",
+    ].join(" ");
 
     function toggleScale() {
         dispatch("toggleScale");
@@ -20,8 +51,15 @@
 </script>
 
 <div class="narrative-container">
+    <div class="sr-only" aria-live="polite" aria-atomic="true">
+        {stepAnnouncement}
+    </div>
+
     <!-- Step 0: The Anchor -->
-    <div class="step">
+    <div
+        class="step"
+        aria-current={activeStepIndex === 0 ? "step" : undefined}
+    >
         <div class="step-content">
             <h2>The Anchor</h2>
             <p class="lead">1 FLOP = 1 Human Math Problem</p>
@@ -36,7 +74,10 @@
     </div>
 
     <!-- Step 1: The Speed Limit -->
-    <div class="step">
+    <div
+        class="step"
+        aria-current={activeStepIndex === 1 ? "step" : undefined}
+    >
         <div class="step-content">
             <h2>The Speed Limit</h2>
             <p class="lead">Moore's Law: The Golden Rule</p>
@@ -51,7 +92,10 @@
     </div>
 
     <!-- Step 2: The Break -->
-    <div class="step">
+    <div
+        class="step"
+        aria-current={activeStepIndex === 2 ? "step" : undefined}
+    >
         <div class="step-content">
             <h2>The Break</h2>
             <p class="lead">Deep Learning Leaves the Line</p>
@@ -68,7 +112,10 @@
     </div>
 
     <!-- Step 3: The Scale -->
-    <div class="step">
+    <div
+        class="step"
+        aria-current={activeStepIndex === 3 ? "step" : undefined}
+    >
         <div class="step-content">
             <h2>The Scale</h2>
             <p class="lead">Unzipping the Logarithmic Scale</p>
@@ -139,7 +186,10 @@
     </div>
 
     <!-- Step 4: Credits & Sources -->
-    <div class="step">
+    <div
+        class="step"
+        aria-current={activeStepIndex === 4 ? "step" : undefined}
+    >
         <div class="step-content credits">
             <h2>Built With Data</h2>
             <p class="lead">Sources & Credits</p>
@@ -225,6 +275,18 @@
         position: relative;
         z-index: 2;
         pointer-events: none; /* Allow clicks through to chart */
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
     .step {

@@ -13,6 +13,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The new validation script runs locally and checks repo structure plus the compute dataset.
 - The app now preserves `step`, `linear`, and `speculative` state in the URL, and the share action copies that same view state.
 - Browser QA of the shareable URL state and keyboard navigation flow passed in headless Chromium against the built app.
+- Browser QA of the story-step live announcements passed in headless Chromium against the built app.
 - The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands

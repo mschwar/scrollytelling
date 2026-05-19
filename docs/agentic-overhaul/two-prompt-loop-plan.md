@@ -72,8 +72,8 @@ Pick the first unchecked item unless a later item is blocked by an explicit prer
 
 - Branch: `feat/accessibility-hardening`
 - Goal: close the remaining accessibility gaps without changing the story.
-- Scope: aria-live updates, reduced-motion handling, and any missing keyboard semantics.
-- Verification: browser QA plus explicit checks for the relevant aria and motion behavior.
+- Scope: reduced-motion handling and any remaining keyboard semantics. Screen-reader live announcements are now implemented in the narrative.
+- Verification: browser QA plus explicit checks for the relevant motion behavior and keyboard semantics.
 - Docs: `README.md`, `CURRENT_STATE.md`, and audit notes.
 
 ### 4. Dependency Cleanup
