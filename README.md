@@ -3,11 +3,12 @@
 > An interactive data visualization proving AI training compute broke Moore's Law in 2012.
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
 
 ![Scrollytelling Demo](https://img.shields.io/badge/demo-scroll--driven-purple)
 
 ---
+
+Current repo truth and contributor bootstrap notes live in [CURRENT_STATE.md](./CURRENT_STATE.md) and [AGENTS.md](./AGENTS.md).
 
 ## 📊 The Story
 
@@ -216,6 +217,9 @@ npm run preview
 
 # Save git checkpoint (Windows)
 save_checkpoint.bat
+
+# Validate the repo state
+npm run validate
 ```
 
 ---
@@ -326,7 +330,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for more architectural rationale.
 
 ## 📄 License
 
-MIT License - See [LICENSE](./LICENSE) file for details.
+License status is unresolved. `package.json` currently declares `ISC`, but there is no canonical `LICENSE` file checked in. See [CURRENT_STATE.md](./CURRENT_STATE.md) for the current decision point.
 
 ---
 

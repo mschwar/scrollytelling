@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "validate": "node scripts/validate_repo.js",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },

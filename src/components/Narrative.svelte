@@ -82,7 +82,7 @@
                 <button
                     class="unzip-button"
                     on:click={toggleScale}
-                    accesskey="l"
+                    type="button"
                     aria-label="Toggle between logarithmic and linear scale. Press L key as shortcut."
                 >
                     {isLinearMode
@@ -175,6 +175,7 @@
                     </p>
                     <button
                         class="share-button"
+                        type="button"
                         on:click={() => {
                             if (navigator.share) {
                                 navigator.share({

@@ -58,12 +58,30 @@
     // Y-axis tick values (powers of 10) - dynamically based on domain
     $: yTicks = (() => {
         const [min, max] = yDomain;
-        const minExp = Math.ceil(Math.log10(min));
-        const maxExp = Math.floor(Math.log10(max));
+
+        if (isLinearMode) {
+            const steps = 4;
+            const span = max - min;
+
+            if (!Number.isFinite(span) || span <= 0) {
+                return [min, max].filter(Number.isFinite);
+            }
+
+            return Array.from({ length: steps + 1 }, (_, index) =>
+                min + (span * index) / steps,
+            );
+        }
+
+        const safeMin = Math.max(min, Number.MIN_VALUE);
+        const safeMax = Math.max(max, safeMin);
+        const minExp = Math.ceil(Math.log10(safeMin));
+        const maxExp = Math.floor(Math.log10(safeMax));
         const ticks = [];
+
         for (let exp = minExp; exp <= maxExp; exp += 5) {
             ticks.push(Math.pow(10, exp));
         }
+
         return ticks;
     })();
 
@@ -82,6 +100,17 @@
 
     // Format large numbers for Y-axis
     function formatFlops(value) {
+        if (value <= 0) {
+            return "0";
+        }
+
+        if (isLinearMode) {
+            return value
+                .toExponential(1)
+                .replace("e+", " × 10^")
+                .replace("e-", " × 10^-");
+        }
+
         const exponent = Math.log10(value);
         return `10^${Math.round(exponent)}`;
     }
@@ -127,11 +156,17 @@
 
     // Detect mobile vs desktop
     let isMobile = false;
-    onMount(() => {
+    function updateMobileState() {
         isMobile = window.innerWidth < 768;
-        window.addEventListener("resize", () => {
-            isMobile = window.innerWidth < 768;
-        });
+    }
+
+    onMount(() => {
+        updateMobileState();
+        window.addEventListener("resize", updateMobileState);
+
+        return () => {
+            window.removeEventListener("resize", updateMobileState);
+        };
     });
 
     // Tweened tooltip position for elastic lag (20ms delay effect)
@@ -196,6 +231,17 @@
         }
     }
 
+    function handleBackgroundKeydown(event) {
+        if (
+            event.key === "Enter" ||
+            event.key === " " ||
+            event.key === "Escape"
+        ) {
+            event.preventDefault();
+            handleBackgroundClick();
+        }
+    }
+
     // Keyboard navigation handlers
     function handleDataPointKeydown(point, event) {
         if (event.key === "Enter" || event.key === " ") {
@@ -229,7 +275,14 @@
     }
 </script>
 
-<div class="chart-container" on:click={handleBackgroundClick}>
+<div
+    class="chart-container"
+    on:click={handleBackgroundClick}
+    on:keydown={handleBackgroundKeydown}
+    role="button"
+    tabindex="0"
+    aria-label="Dismiss open tooltip"
+>
     <svg
         {width}
         {height}
@@ -545,6 +598,11 @@
         align-items: center;
         background-color: var(--color-paper, #f9f9f9);
         font-family: var(--font-body, "Inter", sans-serif);
+    }
+
+    .chart-container:focus-visible {
+        outline: 3px solid var(--color-purple-ai, #bd10e0);
+        outline-offset: -4px;
     }
 
     svg {

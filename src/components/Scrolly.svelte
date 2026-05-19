@@ -1,12 +1,17 @@
 <script>
-    import { onMount, onDestroy } from "svelte";
+    import { onMount } from "svelte";
     import scrollama from "scrollama";
 
     // Bind this value to parent component to track current step
     export let value = 0;
 
-    let scroller;
     let scrollamaInstance;
+
+    function handleResize() {
+        if (scrollamaInstance) {
+            scrollamaInstance.resize();
+        }
+    }
 
     onMount(() => {
         scrollamaInstance = scrollama();
@@ -22,24 +27,18 @@
             });
 
         // Setup resize listener
-        window.addEventListener("resize", scrollamaInstance.resize);
+        window.addEventListener("resize", handleResize);
 
         return () => {
             if (scrollamaInstance) {
                 scrollamaInstance.destroy();
             }
-            window.removeEventListener("resize", scrollamaInstance.resize);
+            window.removeEventListener("resize", handleResize);
         };
-    });
-
-    onDestroy(() => {
-        if (scrollamaInstance) {
-            scrollamaInstance.destroy();
-        }
     });
 </script>
 
-<div class="scrolly-container" bind:this={scroller}>
+<div class="scrolly-container">
     <slot />
 </div>
 

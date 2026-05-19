@@ -65,22 +65,32 @@
         }
     }
 
+    function handleGlobalKeydown(event) {
+        const target = event.target;
+
+        if (
+            target instanceof Element &&
+            target.matches("input, textarea, [contenteditable='true']")
+        ) {
+            return;
+        }
+
+        if (event.key === "l" || event.key === "L") {
+            handleToggleScale();
+        }
+    }
+
     // Handle speculative toggle from Narrative
     function handleToggleSpeculative(event) {
         showSpeculative = event.detail;
     }
 
-    // Global keyboard shortcut for scale toggle
     onMount(() => {
-        window.addEventListener("keydown", (e) => {
-            // Only trigger if not in an input field
-            if (
-                (e.key === "l" || e.key === "L") &&
-                !e.target.matches("input, textarea")
-            ) {
-                handleToggleScale();
-            }
-        });
+        window.addEventListener("keydown", handleGlobalKeydown);
+
+        return () => {
+            window.removeEventListener("keydown", handleGlobalKeydown);
+        };
     });
 
     // Tweened domain stores for smooth animations
