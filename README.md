@@ -22,6 +22,8 @@ This visualization tells a data-driven story in five acts:
 
 As you scroll, the chart dynamically zooms to highlight each milestone. **Interactive tooltips** reveal human-scale analogies ("600 million years"), and the **"Unzipper" animation** physically demonstrates the scale by shooting modern AI models off the screen.
 
+The current story state is shareable through the URL. `step`, `linear`, and `speculative` are encoded in the query string so a copied link reopens the same view.
+
 ---
 
 ## 🚀 Quick Start
@@ -200,6 +202,12 @@ Enable Scrollama visual debugger:
   debug: true  // Shows step boundaries
 })
 ```
+
+### URL State
+
+- Copy the URL after changing the step, scale mode, or speculative toggle.
+- Reopening that link restores the same story state.
+- `npm run verify:url-state` checks the URL-state helper logic directly.
 
 ---
 

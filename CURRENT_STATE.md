@@ -50,6 +50,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - `npm ci` reports dependency vulnerabilities from upstream packages.
 - The dataset mixes historical entries, theory milestones, and speculative projections, so provenance needs care when editing values.
 - Third-party dependency `intersection-observer` is deprecated and probably unnecessary on modern browsers.
+- Browser QA for the shareable URL state remains unverified in this sandbox because local Chromium / Edge startup hit process and crashpad permission errors.
 - Network-dependent facts and source claims were not reverified online during this audit.
 
 ## Immediate Next Moves
