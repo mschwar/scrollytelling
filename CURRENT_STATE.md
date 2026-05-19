@@ -12,6 +12,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The repo contains the expected narrative components, data file, and fallback asset.
 - The new validation script runs locally and checks repo structure plus the compute dataset.
 - The app now preserves `step`, `linear`, and `speculative` state in the URL, and the share action copies that same view state.
+- Browser QA of the shareable URL state passed in headless Chromium against the built app.
 - The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands
@@ -50,7 +51,6 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - `npm ci` reports dependency vulnerabilities from upstream packages.
 - The dataset mixes historical entries, theory milestones, and speculative projections, so provenance needs care when editing values.
 - Third-party dependency `intersection-observer` is deprecated and probably unnecessary on modern browsers.
-- Browser QA for the shareable URL state remains unverified in this sandbox because local Chromium / Edge startup hit process and crashpad permission errors.
 - Network-dependent facts and source claims were not reverified online during this audit.
 
 ## Immediate Next Moves
