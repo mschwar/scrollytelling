@@ -110,6 +110,8 @@ async function main() {
     'AGENTS.md',
     'CURRENT_STATE.md',
     'docs/agentic-overhaul/two-prompt-loop-plan.md',
+    'docs/agentic-overhaul/missing-feature-list.md',
+    'docs/editorial/story-contract.md',
     'index.html',
     'vite.config.js',
     'svelte.config.js',
@@ -168,6 +170,9 @@ async function main() {
   await checkMarkdownLinks('AGENTS.md');
   await checkMarkdownLinks('CURRENT_STATE.md');
   await checkMarkdownLinks('docs/agentic-overhaul/2026-05-audit.md');
+  await checkMarkdownLinks('docs/agentic-overhaul/two-prompt-loop-plan.md');
+  await checkMarkdownLinks('docs/agentic-overhaul/missing-feature-list.md');
+  await checkMarkdownLinks('docs/editorial/story-contract.md');
   await checkHtmlAssets('index.html');
 
   const data = JSON.parse(await readText('src/data/compute_history.json'));
