@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keyboard navigation now hands focus from the narrative into the chart and supports arrow-key traversal across visible data points.
 - Screen reader live regions now announce the active story step and chart state changes.
 - SVG data points are explicitly focusable so chart navigation is more consistent across browsers.
+- The `Jump to Data Points` handoff button now accepts Enter and Space as well as click.
 
 ### Planned for Phase 5 (Future)
 

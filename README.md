@@ -213,6 +213,7 @@ Enable Scrollama visual debugger:
 
 - Tab reaches the Scale panel controls, then `Jump to Data Points` hands
   keyboard focus into the chart.
+- The `Jump to Data Points` button responds to click, Enter, and Space.
 - It is the explicit entry point for keyboard users moving from the narrative
   into the chart.
 - Use `Arrow Left` / `Arrow Right` or `Arrow Up` / `Arrow Down` to move
