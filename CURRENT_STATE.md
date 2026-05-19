@@ -2,7 +2,7 @@
 
 Audit date: 2026-05-19
 
-Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization about AI training compute growth, using D3, Scrollama, and a curated compute timeline to explain how post-2012 model training compute diverged from a Moore's Law-style story. The app combines a sticky chart, scroll-driven narrative panels, a tooltip system, a speculative-data toggle, and a noscript fallback image.
+Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization about AI training compute growth, using D3, Scrollama, and a curated compute timeline to explain how post-2012 model training compute diverged from a Moore's Law-style story. The app combines a sticky chart, scroll-driven narrative panels, a tooltip system, a speculative-data toggle, a grouped provenance view, and a noscript fallback image.
 
 ## Confirmed Working Pieces
 
@@ -12,9 +12,11 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The repo contains the expected narrative components, data file, and fallback asset.
 - The new validation script runs locally and checks repo structure plus the compute dataset.
 - The app now preserves `step`, `linear`, and `speculative` state in the URL, and the share action copies that same view state.
-- Browser QA of the shareable URL state and keyboard navigation flow passed in headless Chromium against the built app.
+- Browser QA of the shareable URL state and keyboard navigation flow passed in headless Chromium against the built app, with screenshot evidence captured.
 - Browser QA of the story-step live announcements passed in headless Chromium against the built app.
+- Browser QA of the Provenance & Credits view passed in headless Chromium against the built app, including the speculative toggle state and screenshots confirming the grouped historical/speculative summary cards and reference links.
 - The chart handoff button now responds to click, Enter, and Space so keyboard users can move into the chart consistently.
+- The Credits step now groups source labels into historical records and speculative estimates for provenance review.
 - The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Screen reader live regions now announce the active story step and chart state changes.
 - SVG data points are explicitly focusable so chart navigation is more consistent across browsers.
 - The `Jump to Data Points` handoff button now accepts Enter and Space as well as click.
+- The Credits step now groups source labels into historical records and speculative estimates so provenance can be reviewed without raw JSON.
 
 ### Planned for Phase 5 (Future)
 

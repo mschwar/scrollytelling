@@ -18,7 +18,7 @@ This visualization tells a data-driven story in five acts:
 2. **The Speed Limit**: Show Moore's Law as the "golden rule" (2× every 2 years)
 3. **The Break**: Reveal how AlexNet (2012) shattered that curve
 4. **The Scale**: Measure the magnitude (GPT-4 = 600 million human lifetimes)
-5. **The Credits**: Data sources, tech stack, and attribution
+5. **The Provenance**: Group source labels into historical records and speculative estimates, then show the tech stack and attribution
 
 As you scroll, the chart dynamically zooms to highlight each milestone. **Interactive tooltips** reveal human-scale analogies ("600 million years"), and the **"Unzipper" animation** physically demonstrates the scale by shooting modern AI models off the screen.
 
@@ -191,6 +191,7 @@ npm run dev
 4. ✅ Step 2: Purple AI dots "explode" upward
 5. ✅ Background icons fade (👤 → 🖥️ → 🏢)
 6. ✅ Text boxes have glassmorphic blur effect
+7. ✅ Step 4: The Credits step groups provenance into historical and speculative cards, and the speculative toggle hides the future estimates cleanly
 
 ### Debug Mode
 
@@ -366,10 +367,11 @@ See [CHANGELOG.md](./CHANGELOG.md) for more architectural rationale.
 - [Our World in Data](https://ourworldindata.org/) - Compute visualizations
 - [FiveThirtyEight](https://fivethirtyeight.com/) - Data-driven narratives
 
-### Data Sources
+### Data Sources & Provenance
 
 - [Epoch AI](https://epochai.org/) - ML compute dataset
 - [Our World in Data](https://ourworldindata.org/technological-progress) - Historical compute
+- The Credits step now groups source labels into historical records and speculative estimates for quicker provenance review.
 
 ---
 
