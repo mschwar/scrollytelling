@@ -7,6 +7,8 @@
 - Treat `README.md` as the user-facing overview, not the authoritative status document.
 - Use `docs/agentic-overhaul/2026-05-audit.md` for the more detailed audit, backlog, and do-not-do-yet list.
 - Use `docs/agentic-overhaul/two-prompt-loop-plan.md` for the feature queue and branch/PR loop.
+- Use `docs/agentic-overhaul/missing-feature-list.md` as the canonical ordered feature map. Pick the first `todo` item unless one item is already `in_progress` or `qa`.
+- Use `docs/editorial/story-contract.md` as the source of truth for audience, claim, data categories, terms, copy rules, and the five-act story.
 
 ## Canonical Files
 
@@ -21,7 +23,9 @@
 - Validation: `scripts/validate_repo.js`
 - Bootstrap status: `CURRENT_STATE.md`
 - Detailed audit: `docs/agentic-overhaul/2026-05-audit.md`
-- Feature queue: `docs/agentic-overhaul/two-prompt-loop-plan.md`
+- Loop protocol: `docs/agentic-overhaul/two-prompt-loop-plan.md`
+- Canonical feature map: `docs/agentic-overhaul/missing-feature-list.md`
+- Editorial contract: `docs/editorial/story-contract.md`
 
 ## Commands To Run
 
@@ -49,8 +53,13 @@
 - Keep interactive controls keyboard reachable.
 - Keep aria labels and fallback text aligned with what the UI actually does.
 - Update `CURRENT_STATE.md` and `docs/agentic-overhaul/2026-05-audit.md` when the repo truth changes.
-- Update `docs/agentic-overhaul/two-prompt-loop-plan.md` when a feature moves on or off the queue.
+- Update `docs/agentic-overhaul/missing-feature-list.md` whenever a feature changes status.
+- Update `docs/agentic-overhaul/two-prompt-loop-plan.md` only when the loop protocol itself changes.
 - Keep `README.md` commands aligned with the actual scripts in `package.json`.
+
+## Two-Prompt Loop Output
+
+When working from the two-prompt loop, every final response must include the current feature, high-level feature map status, verification performed, docs touched, and the exact next loop command from `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Safe-Change Rules
 

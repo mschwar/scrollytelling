@@ -1,6 +1,6 @@
-# AI Compute "Phase Shift" Scrollytelling Visualization
+# AI Training Compute Scrollytelling Visualization
 
-> An interactive data visualization proving AI training compute broke Moore's Law in 2012.
+> An interactive data visualization showing how large AI training runs grew far faster than a Moore's Law-style hardware baseline.
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
 
@@ -8,19 +8,19 @@
 
 ---
 
-Current repo truth and contributor bootstrap notes live in [CURRENT_STATE.md](./CURRENT_STATE.md) and [AGENTS.md](./AGENTS.md).
+Current repo truth and contributor bootstrap notes live in [CURRENT_STATE.md](./CURRENT_STATE.md) and [AGENTS.md](./AGENTS.md). The editorial source of truth lives in [docs/editorial/story-contract.md](./docs/editorial/story-contract.md).
 
 ## 📊 The Story
 
 This visualization tells a data-driven story in five acts:
 
-1. **The Anchor**: Establish 1 FLOP = 1 Human math problem per second
-2. **The Speed Limit**: Show Moore's Law as the "golden rule" (2× every 2 years)
-3. **The Break**: Reveal how AlexNet (2012) shattered that curve
-4. **The Scale**: Measure the magnitude (GPT-4 = 600 million human lifetimes)
-5. **The Provenance**: Group source labels into historical records and speculative estimates, then show the tech stack and attribution
+1. **Anchor**: Give the reader a rough human-scale baseline for FLOP.
+2. **Baseline**: Show the older hardware-progress intuition often summarized as Moore's Law.
+3. **Inflection**: Show how deep-learning training runs visibly diverged from that baseline.
+4. **Scale**: Make the modern magnitude inspectable through defensible comparisons.
+5. **Trust**: Separate historical, estimated, speculative, and pedagogical data so the chart can be audited.
 
-As you scroll, the chart dynamically zooms to highlight each milestone. **Interactive tooltips** reveal human-scale analogies ("600 million years"), and the **"Unzipper" animation** physically demonstrates the scale by shooting modern AI models off the screen.
+As you scroll, the chart dynamically zooms to highlight each milestone. Interactive tooltips reveal scale analogies and source labels, and the linear-scale interaction demonstrates why a log scale is necessary for the current range.
 
 The current story state is shareable through the URL. `step`, `linear`, and `speculative` are encoded in the query string so a copied link reopens the same view.
 
