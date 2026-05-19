@@ -4,6 +4,7 @@ import { access, readFile } from 'node:fs/promises';
 import { constants as fsConstants } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { buildProvenanceSummary } from '../src/lib/provenance.js';
 
 const root = process.cwd();
 const args = new Set(process.argv.slice(2));
@@ -172,6 +173,49 @@ async function main() {
   const data = JSON.parse(await readText('src/data/compute_history.json'));
   assert(Array.isArray(data), 'compute_history.json must contain an array');
   assert(data.length > 0, 'compute_history.json must not be empty');
+
+  const provenanceSummary = buildProvenanceSummary(data);
+  const provenanceEntryCount = provenanceSummary.reduce(
+    (total, group) => total + group.entryCount,
+    0,
+  );
+
+  assert(
+    provenanceSummary.length === 2,
+    'provenance summary must include historical and speculative groups',
+  );
+  assert(
+    provenanceEntryCount === data.length,
+    'provenance summary must cover every dataset entry',
+  );
+  assert(
+    provenanceSummary.every(
+      (group) =>
+        typeof group.label === 'string' &&
+        group.label.trim().length > 0 &&
+        Array.isArray(group.sources) &&
+        group.sources.every(
+          (source) =>
+            typeof source.name === 'string' &&
+            source.name.trim().length > 0 &&
+            Number.isInteger(source.count) &&
+            source.count > 0,
+        ),
+    ),
+    'provenance summary must expose valid grouped source labels',
+  );
+  assert(
+    provenanceSummary.some(
+      (group) => group.key === 'historical' && group.entryCount > 0,
+    ),
+    'provenance summary must include historical records',
+  );
+  assert(
+    provenanceSummary.some(
+      (group) => group.key === 'speculative' && group.entryCount > 0,
+    ),
+    'provenance summary must include speculative records',
+  );
 
   const seenIds = new Set();
   const allowedCategories = new Set([

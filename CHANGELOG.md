@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - URL query parameters now preserve the active scroll step, linear toggle, and speculative data toggle so the current story state can be reloaded or shared directly.
 - Keyboard navigation now hands focus from the narrative into the chart and supports arrow-key traversal across visible data points.
+- The Credits step now groups source labels into historical records and speculative estimates so provenance can be reviewed without raw JSON.
 
 ### Planned for Phase 5 (Future)
 

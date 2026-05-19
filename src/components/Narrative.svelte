@@ -1,10 +1,13 @@
 <script>
     import { createEventDispatcher } from "svelte";
+    import computeHistory from "../data/compute_history.json";
+    import { buildProvenanceSummary } from "../lib/provenance.js";
 
     export let isLinearMode = false;
     export let showSpeculative = true; // Show by default
 
     const dispatch = createEventDispatcher();
+    const provenanceSummary = buildProvenanceSummary(computeHistory);
 
     function toggleScale() {
         dispatch("toggleScale");
@@ -141,11 +144,47 @@
     <!-- Step 4: Credits & Sources -->
     <div class="step">
         <div class="step-content credits">
-            <h2>Built With Data</h2>
-            <p class="lead">Sources & Credits</p>
+            <h2>Provenance & Credits</h2>
+            <p class="lead">Historical records and speculative estimates</p>
+
+            <div class="provenance-summary">
+                {#each provenanceSummary as group}
+                    <section class={`provenance-card provenance-card--${group.key}`}>
+                        <div class="provenance-card-header">
+                            <p class="provenance-kicker">{group.label}</p>
+                            <h3>{group.entryCount} points</h3>
+                            <p class="provenance-meta">
+                                {group.sourceCount} source labels
+                            </p>
+                        </div>
+
+                        <ul class="source-grid">
+                            {#each group.sources as source}
+                                <li class="source-chip">
+                                    <span class="source-chip-name">
+                                        {source.name}
+                                    </span>
+                                    <span class="source-chip-count">
+                                        {source.count} point{source.count === 1
+                                            ? ""
+                                            : "s"}
+                                    </span>
+                                </li>
+                            {/each}
+                        </ul>
+                    </section>
+                {/each}
+            </div>
+
+            <p class="provenance-note">
+                Every point in <code>src/data/compute_history.json</code> carries
+                an explicit source label. Speculative entries are grouped
+                separately from historical records so the timeline can be audited
+                at a glance.
+            </p>
 
             <div class="credits-section">
-                <h3>Data Sources</h3>
+                <h3>Reference Links</h3>
                 <ul>
                     <li>
                         <a
@@ -356,6 +395,91 @@
     .credits {
         background: rgba(255, 255, 255, 0.95);
         max-width: 600px;
+    }
+
+    .provenance-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .provenance-card {
+        padding: 1rem 1.1rem 1.1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(26, 26, 26, 0.12);
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .provenance-card--historical {
+        border-top: 4px solid var(--color-orange-moores, #f5a623);
+    }
+
+    .provenance-card--speculative {
+        border-top: 4px solid var(--color-purple-ai, #bd10e0);
+    }
+
+    .provenance-card-header {
+        margin-bottom: 0.85rem;
+    }
+
+    .provenance-kicker {
+        margin: 0 0 0.35rem;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(26, 26, 26, 0.58);
+    }
+
+    .provenance-card h3 {
+        margin: 0;
+        font-size: 1.12rem;
+    }
+
+    .provenance-meta {
+        margin: 0.25rem 0 0;
+        font-size: 0.88rem;
+        color: rgba(26, 26, 26, 0.72);
+    }
+
+    .source-grid {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.55rem;
+        padding: 0;
+        margin: 0;
+    }
+
+    .source-chip {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 10px;
+        background: rgba(26, 26, 26, 0.04);
+        border: 1px solid rgba(26, 26, 26, 0.08);
+    }
+
+    .source-chip-name {
+        font-size: 0.88rem;
+        font-weight: 600;
+        line-height: 1.35;
+    }
+
+    .source-chip-count {
+        font-size: 0.78rem;
+        color: rgba(26, 26, 26, 0.68);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .provenance-note {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: rgba(26, 26, 26, 0.75);
+        line-height: 1.55;
     }
 
     .credits h3 {
