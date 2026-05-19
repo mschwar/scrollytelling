@@ -41,6 +41,7 @@
     // Off-chart message state
     let showOffChartMessage = false;
     let hasHydratedStoryState = false;
+    let chartRef;
 
     // Handle toggle from Narrative component
     function handleToggleScale() {
@@ -106,6 +107,10 @@
     // Handle speculative toggle from Narrative
     function handleToggleSpeculative(event) {
         showSpeculative = event.detail;
+    }
+
+    function handleFocusChart() {
+        chartRef?.focusFirstVisiblePoint();
     }
 
     onMount(() => {
@@ -185,6 +190,7 @@
     <!-- Layer 1: Chart (D3 Visualization) - STICKY -->
     <div class="chart-layer">
         <Chart
+            bind:this={chartRef}
             xDomain={$xDomainTween}
             yDomain={$yDomainTween}
             {isLinearMode}
@@ -214,6 +220,7 @@
             <Narrative
                 {isLinearMode}
                 on:toggleScale={handleToggleScale}
+                on:focusChart={handleFocusChart}
                 {showSpeculative}
                 on:toggleSpeculative={handleToggleSpeculative}
             />

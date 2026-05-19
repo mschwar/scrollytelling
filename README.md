@@ -209,6 +209,18 @@ Enable Scrollama visual debugger:
 - Reopening that link restores the same story state.
 - `npm run verify:url-state` checks the URL-state helper logic directly.
 
+### Keyboard Navigation
+
+- Tab moves into the chart through the first visible data point.
+- Use the `Jump to Data Points` button in the Scale panel to hand keyboard
+  focus from the narrative into the chart.
+- Use `Arrow Left` / `Arrow Right` or `Arrow Up` / `Arrow Down` to move
+  between data points once focus is in the chart.
+- `Home` and `End` jump to the first or last visible point.
+- `Enter` or `Space` keeps the current point open, and `Escape` clears the
+  tooltip.
+- The `L` shortcut still toggles the linear scale outside editable fields.
+
 ---
 
 ## 🔧 Development Scripts
@@ -268,7 +280,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 
 ### Phase 5 (Future)
 
-- [ ] Keyboard navigation for data points
+- [x] Keyboard navigation for data points
 - [ ] ARIA live regions and screen reader support
 - [ ] Accessibility audit (WCAG AA compliance)
 

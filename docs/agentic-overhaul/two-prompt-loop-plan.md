@@ -41,20 +41,18 @@ A feature is mergeable only when all of these are true:
   - Result: query parameters now reopen the same story state, and the share action copies the current view URL.
   - Verification: `npm run verify:url-state`, `npm run validate`, and `npm run build`.
   - Docs: `README.md`, `CURRENT_STATE.md`, and this plan.
+- Keyboard Navigation Upgrade
+  - Branch: `feat/keyboard-navigation`
+  - Goal: make data point navigation fully keyboard-driven with arrow-key traversal and explicit focus handoff.
+  - Result: the Scale panel can hand focus into the chart, and the chart now supports roving focus across visible points with live announcements.
+  - Verification: `npm run validate`, `npm run build`, and browser QA in headless Chromium with keyboard-only traversal.
+  - Docs: `README.md`, `CURRENT_STATE.md`, and this plan.
 
 ## Feature Queue
 
 Pick the first unchecked item unless a later item is blocked by an explicit prerequisite.
 
-### 1. Keyboard Navigation Upgrade
-
-- Branch: `feat/keyboard-navigation`
-- Goal: make data point navigation fully keyboard-driven with arrow-key traversal and explicit focus handoff.
-- Scope: chart focus order, arrow-key handlers, focus indicators, and any needed aria-live updates.
-- Verification: browser QA with keyboard-only navigation and screenshot evidence.
-- Docs: `README.md`, `CURRENT_STATE.md`, and a note on keyboard shortcuts.
-
-### 2. Provenance and Sources View
+### 1. Provenance and Sources View
 
 - Branch: `feat/provenance-view`
 - Goal: make dataset provenance easier to audit without reading raw JSON.
@@ -62,7 +60,7 @@ Pick the first unchecked item unless a later item is blocked by an explicit prer
 - Verification: non-UI validation for source coverage plus browser QA for the rendered view.
 - Docs: `README.md`, `CURRENT_STATE.md`, and source notes if any fields change.
 
-### 3. Share And Snapshot
+### 2. Share And Snapshot
 
 - Branch: `feat/share-snapshot`
 - Goal: provide a clear export or share action for the current story state.
@@ -70,7 +68,7 @@ Pick the first unchecked item unless a later item is blocked by an explicit prer
 - Verification: browser QA with a recorded interaction and screenshot.
 - Docs: `README.md` and `CURRENT_STATE.md`.
 
-### 4. Accessibility Hardening
+### 3. Accessibility Hardening
 
 - Branch: `feat/accessibility-hardening`
 - Goal: close the remaining accessibility gaps without changing the story.
@@ -78,7 +76,7 @@ Pick the first unchecked item unless a later item is blocked by an explicit prer
 - Verification: browser QA plus explicit checks for the relevant aria and motion behavior.
 - Docs: `README.md`, `CURRENT_STATE.md`, and audit notes.
 
-### 5. Dependency Cleanup
+### 4. Dependency Cleanup
 
 - Branch: `chore/dependency-cleanup`
 - Goal: remove or replace low-value dependencies when the behavior is already covered natively.

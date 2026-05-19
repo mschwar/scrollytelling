@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import { scaleLog, scaleLinear } from "d3-scale";
     import { line } from "d3-shape";
     import { tweened } from "svelte/motion";
@@ -146,13 +146,46 @@
     let mouseY = 0;
 
     // Keyboard navigation state
-    let currentFocusIndex = -1;
+    let chartRoot;
+    let activePointId = "";
+    let liveAnnouncement = "";
     $: allDataPoints = [
         ...historicalData,
         ...theoryData,
         ...deepLearningData,
         ...speculativeData,
-    ].sort((a, b) => a.date_decimal - b.date_decimal);
+    ].sort((a, b) => {
+        if (a.date_decimal !== b.date_decimal) {
+            return a.date_decimal - b.date_decimal;
+        }
+
+        return a.name.localeCompare(b.name);
+    });
+    $: visiblePointsSorted = [...visibleData].sort((a, b) => {
+        if (a.date_decimal !== b.date_decimal) {
+            return a.date_decimal - b.date_decimal;
+        }
+
+        return a.name.localeCompare(b.name);
+    });
+    $: {
+        if (visiblePointsSorted.length === 0) {
+            activePointId = "";
+            tooltipVisible = false;
+            tooltipData = null;
+            liveAnnouncement = "";
+        } else if (
+            !visiblePointsSorted.some((point) => point.id === activePointId)
+        ) {
+            const fallbackPoint = visiblePointsSorted[0];
+            activePointId = fallbackPoint.id;
+
+            if (tooltipVisible) {
+                tooltipData = fallbackPoint;
+                liveAnnouncement = describePoint(fallbackPoint);
+            }
+        }
+    }
 
     // Detect mobile vs desktop
     let isMobile = false;
@@ -169,6 +202,75 @@
         };
     });
 
+    function getPointElement(pointId) {
+        return chartRoot?.querySelector(`[data-point-id="${pointId}"]`);
+    }
+
+    function positionTooltipFromElement(pointElement) {
+        if (!pointElement) {
+            return;
+        }
+
+        const rect = pointElement.getBoundingClientRect();
+        mouseX = rect.left + rect.width / 2;
+        mouseY = rect.top + rect.height / 2;
+    }
+
+    function describePoint(point) {
+        const year = point.date_decimal.toFixed(
+            point.date_decimal % 1 === 0 ? 0 : 1,
+        );
+        const compute = formatFlops(point.training_compute_flops);
+        const note = point.is_speculative ? " Speculative estimate." : "";
+        const analogy = point.human_analogy ? ` ${point.human_analogy}.` : "";
+
+        return `${point.name}, ${year}: ${compute} FLOPs.${note}${analogy}`;
+    }
+
+    function showPoint(
+        point,
+        pointElement,
+        {
+            announce = true,
+            lockTooltip = false,
+            makeActive = true,
+        } = {},
+    ) {
+        if (makeActive) {
+            activePointId = point.id;
+        }
+        tooltipData = point;
+        tooltipVisible = true;
+        persistentTooltip = lockTooltip;
+        positionTooltipFromElement(pointElement);
+
+        if (announce) {
+            liveAnnouncement = describePoint(point);
+        }
+    }
+
+    async function focusPointByIndex(index, { announce = true } = {}) {
+        if (!visiblePointsSorted.length) {
+            return;
+        }
+
+        const clampedIndex = Math.max(
+            0,
+            Math.min(index, visiblePointsSorted.length - 1),
+        );
+        const point = visiblePointsSorted[clampedIndex];
+        const pointElement = getPointElement(point.id);
+
+        showPoint(point, pointElement, { announce });
+
+        await tick();
+        pointElement?.focus();
+    }
+
+    export function focusFirstVisiblePoint() {
+        return focusPointByIndex(0);
+    }
+
     // Tweened tooltip position for elastic lag (20ms delay effect)
     const tooltipX = tweened(0, { duration: 20, easing: cubicOut });
     const tooltipY = tweened(0, { duration: 20, easing: cubicOut });
@@ -176,59 +278,68 @@
     $: tooltipX.set(mouseX);
     $: tooltipY.set(mouseY);
 
-    // Handle mouse interactions with data points
+    // Handle mouse and keyboard interactions with data points
     function handlePointEnter(point, event) {
         if (isMobile || persistentTooltip) return; // Ignore hover on mobile or if locked
 
-        tooltipData = point;
-        tooltipVisible = true;
-
-        // Position tooltip at the data point
-        const pointElement = event.target;
-        const rect = pointElement.getBoundingClientRect();
-        mouseX = rect.left + rect.width / 2;
-        mouseY = rect.top + rect.height / 2;
+        showPoint(point, event.currentTarget, {
+            announce: false,
+            makeActive: false,
+        });
     }
 
     function handlePointLeave() {
-        if (!persistentTooltip) {
-            tooltipVisible = false;
-            tooltipData = null;
+        if (persistentTooltip) {
+            return;
         }
+
+        if (typeof document !== "undefined") {
+            const focusedElement = document.activeElement;
+            if (
+                focusedElement instanceof Element &&
+                focusedElement.closest("[data-point-id]")
+            ) {
+                return;
+            }
+        }
+
+        tooltipVisible = false;
+        tooltipData = null;
+        liveAnnouncement = "";
     }
 
     function handlePointClick(point, event) {
-        // Allow click to lock tooltip on desktop too, or just for mobile consistency
-        if (isMobile) {
-            event.stopPropagation(); // Prevent background click
+        event.stopPropagation();
 
-            // If clicking the same point that's already open/locked, close it
+        const pointElement = event.currentTarget;
+
+        if (isMobile) {
             if (tooltipVisible && tooltipData && tooltipData.id === point.id) {
                 tooltipVisible = false;
                 tooltipData = null;
                 persistentTooltip = false;
-            } else {
-                // Open new point and lock it
-                tooltipData = point;
-                tooltipVisible = true;
-                persistentTooltip = true;
-
-                // Position at point
-                const pointElement = event.target;
-                const rect = pointElement.getBoundingClientRect();
-                mouseX = rect.left + rect.width / 2;
-                mouseY = rect.top + rect.height / 2;
+                liveAnnouncement = "";
+                return;
             }
+
+            showPoint(point, pointElement, { announce: true, lockTooltip: true });
+            return;
         }
+
+        showPoint(point, pointElement, { announce: true });
+        pointElement.focus();
     }
 
     // Close tooltip when clicking background
     function handleBackgroundClick() {
-        if (tooltipVisible) {
-            tooltipVisible = false;
-            tooltipData = null;
-            persistentTooltip = false;
+        if (!tooltipVisible) {
+            return;
         }
+
+        tooltipVisible = false;
+        tooltipData = null;
+        persistentTooltip = false;
+        liveAnnouncement = "";
     }
 
     function handleBackgroundKeydown(event) {
@@ -242,33 +353,68 @@
         }
     }
 
+    function handlePointFocus(point, event) {
+        showPoint(point, event.currentTarget, {
+            announce: true,
+            lockTooltip:
+                persistentTooltip && tooltipData?.id === point.id,
+        });
+    }
+
+    function handlePointBlur(event) {
+        const nextTarget = event.relatedTarget;
+        if (
+            nextTarget instanceof Element &&
+            nextTarget.closest("[data-point-id]")
+        ) {
+            return;
+        }
+
+        handlePointLeave();
+    }
+
     // Keyboard navigation handlers
     function handleDataPointKeydown(point, event) {
+        const currentIndex = visiblePointsSorted.findIndex(
+            (candidate) => candidate.id === point.id,
+        );
+
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+            event.preventDefault();
+            focusPointByIndex(currentIndex + 1);
+            return;
+        }
+
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+            event.preventDefault();
+            focusPointByIndex(currentIndex - 1);
+            return;
+        }
+
+        if (event.key === "Home") {
+            event.preventDefault();
+            focusPointByIndex(0);
+            return;
+        }
+
+        if (event.key === "End") {
+            event.preventDefault();
+            focusPointByIndex(visiblePointsSorted.length - 1);
+            return;
+        }
+
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
-            // Show tooltip at data point position
-            tooltipData = point;
-            tooltipVisible = true;
-            const pointElement = event.target;
-            const rect = pointElement.getBoundingClientRect();
-            mouseX = rect.left + rect.width / 2;
-            mouseY = rect.top + rect.height / 2;
+            showPoint(point, event.currentTarget, { announce: true });
+            return;
+        }
+
+        if (event.key === "Escape") {
+            event.preventDefault();
+            handleBackgroundClick();
         }
     }
 
-    function handleDataPointFocus(point, event) {
-        // Optional: show tooltip on focus for better accessibility
-        if (!isMobile) {
-            tooltipData = point;
-            tooltipVisible = true;
-            const pointElement = event.target;
-            const rect = pointElement.getBoundingClientRect();
-            mouseX = rect.left + rect.width / 2;
-            mouseY = rect.top + rect.height / 2;
-        }
-    }
-
-    // Update mouse position
     function updateMousePosition(event) {
         mouseX = event.clientX;
         mouseY = event.clientY;
@@ -277,10 +423,11 @@
 
 <div
     class="chart-container"
+    bind:this={chartRoot}
     on:click={handleBackgroundClick}
     on:keydown={handleBackgroundKeydown}
     role="button"
-    tabindex="0"
+    tabindex="-1"
     aria-label="Dismiss open tooltip"
 >
     <svg
@@ -297,7 +444,8 @@
             shows {allDataPoints.length} data points across {isLinearMode
                 ? "linear"
                 : "logarithmic"} scale, with Moore's Law reference line. Use Tab
-            key to navigate through data points, Enter or Space to view details.
+            to reach the first visible point, then use the arrow keys to move
+            between milestones. Enter or Space keeps the current point open.
         </desc>
 
         <g transform={`translate(${margin.left},${margin.top})`}>
@@ -334,16 +482,17 @@
                     stroke-width="2"
                     opacity="0.9"
                     class="data-point"
-                    tabindex="0"
+                    data-point-id={point.id}
+                    tabindex={point.id === activePointId ? "0" : "-1"}
                     role="button"
-                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. ${point.human_analogy || ""}`}
+                    aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
                     on:keydown={(e) => handleDataPointKeydown(point, e)}
-                    on:focus={(e) => handleDataPointFocus(point, e)}
-                    on:blur={handlePointLeave}
+                    on:focus={(e) => handlePointFocus(point, e)}
+                    on:blur={handlePointBlur}
                 />
             {/each}
 
@@ -358,16 +507,17 @@
                     stroke-width="2"
                     opacity="0.95"
                     class="data-point"
-                    tabindex="0"
+                    data-point-id={point.id}
+                    tabindex={point.id === activePointId ? "0" : "-1"}
                     role="button"
-                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. ${point.human_analogy || ""}`}
+                    aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
                     on:keydown={(e) => handleDataPointKeydown(point, e)}
-                    on:focus={(e) => handleDataPointFocus(point, e)}
-                    on:blur={handlePointLeave}
+                    on:focus={(e) => handlePointFocus(point, e)}
+                    on:blur={handlePointBlur}
                 />
             {/each}
 
@@ -382,16 +532,17 @@
                     stroke-width="2"
                     opacity="0.9"
                     class="data-point"
-                    tabindex="0"
+                    data-point-id={point.id}
+                    tabindex={point.id === activePointId ? "0" : "-1"}
                     role="button"
-                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. ${point.human_analogy || ""}`}
+                    aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
                     on:keydown={(e) => handleDataPointKeydown(point, e)}
-                    on:focus={(e) => handleDataPointFocus(point, e)}
-                    on:blur={handlePointLeave}
+                    on:focus={(e) => handlePointFocus(point, e)}
+                    on:blur={handlePointBlur}
                 />
             {/each}
 
@@ -407,16 +558,17 @@
                     stroke-dasharray="3,3"
                     opacity="0.85"
                     class="data-point speculative"
-                    tabindex="0"
+                    data-point-id={point.id}
+                    tabindex={point.id === activePointId ? "0" : "-1"}
                     role="button"
-                    aria-label={`${point.name}, ${point.date_decimal.toFixed(0)}: ${formatFlops(point.training_compute_flops)}. Speculative estimate. ${point.human_analogy || ""}`}
+                    aria-label={describePoint(point)}
                     on:mouseenter={(e) => handlePointEnter(point, e)}
                     on:mouseleave={handlePointLeave}
                     on:mousemove={updateMousePosition}
                     on:click={(e) => handlePointClick(point, e)}
                     on:keydown={(e) => handleDataPointKeydown(point, e)}
-                    on:focus={(e) => handleDataPointFocus(point, e)}
-                    on:blur={handlePointLeave}
+                    on:focus={(e) => handlePointFocus(point, e)}
+                    on:blur={handlePointBlur}
                 />
                 <!-- Warning badge for speculative points -->
                 <text
@@ -589,6 +741,10 @@
     data={tooltipData}
 />
 
+<div class="sr-only" aria-live="polite" aria-atomic="true">
+    {liveAnnouncement}
+</div>
+
 <style>
     .chart-container {
         width: 100%;
@@ -598,11 +754,6 @@
         align-items: center;
         background-color: var(--color-paper, #f9f9f9);
         font-family: var(--font-body, "Inter", sans-serif);
-    }
-
-    .chart-container:focus-visible {
-        outline: 3px solid var(--color-purple-ai, #bd10e0);
-        outline-offset: -4px;
     }
 
     svg {
@@ -635,5 +786,17 @@
     :global(.data-point:focus-visible) {
         r: 12;
         stroke-width: 3;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 </style>

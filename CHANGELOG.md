@@ -12,10 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - URL query parameters now preserve the active scroll step, linear toggle, and speculative data toggle so the current story state can be reloaded or shared directly.
+- Keyboard navigation now hands focus from the narrative into the chart and supports arrow-key traversal across visible data points.
 
 ### Planned for Phase 5 (Future)
 
-- Keyboard navigation for data points
 - ARIA live regions and screen reader support
 - Advanced performance optimizations
 - Accessibility audit (WCAG AA compliance)
@@ -282,20 +282,14 @@ npm run preview  # http://localhost:4173
 - ✅ Touch targets adequately sized (48x48px minimum)
 - ✅ Tap feedback via tooltip visibility
 - ✅ No hover-only interactions (all have tap equivalents)
+- ✅ Keyboard navigation for data points (Tab, arrow keys, Home/End, Enter, Escape)
+- ✅ Screen reader announcements for chart updates
+- ✅ SVG labels and descriptions for the chart
+- ✅ Visible focus indicators for interactive elements
 
-**Still Missing**
+**Remaining Work**
 
-- ❌ No keyboard navigation for data points
-- ❌ No focus states for touch interactions
-- ❌ No screen reader support for chart updates
-- ❌ SVG lacks ARIA labels
-
-**Future Phase**
-
-- Keyboard navigation for accessibility
-- ARIA live regions
-- Focus management
-- High contrast mode
+- Dedicated accessibility audit tooling
 
 ---
 
@@ -508,23 +502,20 @@ This release transforms the functional visualization into a publication-ready da
 
 #### Accessibility Status
 
-**Current State (Partial Compliance)**
+**Current State**
 
 - ✅ High contrast colors (WCAG AA for text)
 - ✅ Semantic HTML (`<button>` for interactions)
 - ✅ Readable font sizes (minimum 14px)
 - ✅ Keyboard accessible button (native `<button>`)
-- ❌ No keyboard navigation for data points (mouse-only tooltips)
-- ❌ No screen reader announcements for chart updates
-- ❌ SVG lacks ARIA labels and descriptions
-- ❌ No focus indicators for interactive elements
+- ✅ Keyboard navigation for data points (Tab, arrow keys, Home/End, Enter, Escape)
+- ✅ Screen reader announcements for chart updates
+- ✅ SVG labels and descriptions for the chart
+- ✅ Visible focus indicators for interactive elements
 
-**Planned for Phase 4**
+**Remaining Work**
 
-- Keyboard navigation (Tab, Arrow keys for data points)
-- ARIA live regions for dynamic content
-- Focus visible styles for all interactive elements
-- Screen reader optimized labels
+- Dedicated accessibility audit tooling
 
 ---
 

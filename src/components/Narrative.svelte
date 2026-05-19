@@ -13,6 +13,10 @@
     function handleSpeculativeChange() {
         dispatch("toggleSpeculative", showSpeculative);
     }
+
+    function focusChart() {
+        dispatch("focusChart");
+    }
 </script>
 
 <div class="narrative-container">
@@ -115,6 +119,20 @@
                         Click to reveal speculative future models (hidden by
                         default).
                     {/if}
+                </p>
+
+                <button
+                    class="focus-chart-button"
+                    type="button"
+                    on:click={focusChart}
+                    aria-label="Move keyboard focus to the first visible data point in the chart."
+                >
+                    Jump to Data Points
+                </button>
+                <p class="focus-hint">
+                    Once focus moves into the chart, use the arrow keys to move
+                    between milestones. Home and End jump to the first or last
+                    visible point.
                 </p>
             </div>
         </div>
@@ -435,6 +453,45 @@
     .speculative-hint em {
         color: #9b9b9b;
         font-weight: 500;
+    }
+
+    .focus-chart-button {
+        width: 100%;
+        margin-top: 1rem;
+        padding: 0.85rem 1rem;
+        font-family: var(--font-heading, "Inter", sans-serif);
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        background: linear-gradient(135deg, rgba(245, 166, 35, 0.15), rgba(189, 16, 224, 0.15));
+        border: 1px solid rgba(26, 26, 26, 0.18);
+        border-radius: 6px;
+        cursor: pointer;
+        transition:
+            transform 180ms ease,
+            box-shadow 180ms ease,
+            border-color 180ms ease,
+            background 180ms ease;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .focus-chart-button:hover {
+        transform: translateY(-1px);
+        border-color: rgba(189, 16, 224, 0.45);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+
+    .focus-chart-button:focus-visible {
+        outline: 3px solid var(--color-purple-ai, #bd10e0);
+        outline-offset: 3px;
+    }
+
+    .focus-hint {
+        margin-top: 0.75rem;
+        font-size: 0.85rem;
+        color: rgba(26, 26, 26, 0.7);
+        line-height: 1.5;
+        font-style: italic;
     }
 
     /* Responsive adjustments */
