@@ -21,10 +21,11 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The two-prompt loop protocol now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 - The canonical ordered feature map now lives in `docs/agentic-overhaul/missing-feature-list.md`.
 - The editorial source of truth now lives in `docs/editorial/story-contract.md`; future copy, data, and visual work should use that contract instead of the older "proved/broke Moore's Law" framing.
+- Feature 1 Prompt B QA passed on 2026-05-19 with `npm run validate`, `npm run build`, desktop and mobile browser screenshots, and a console-error check.
 
 ## Existing Commands
 
-- `npm run dev` - available, not run during this audit.
+- `npm run dev` - passed for Prompt B browser QA at `http://127.0.0.1:4177/`.
 - `npm run build` - passed.
 - `npm run preview` - available, not run during this audit.
 - `npm run validate` - added in this pass and passed.
@@ -60,12 +61,14 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 ## Known Risks
 
 - There are no automated tests.
+- `npm ci` reports dependency vulnerabilities from upstream packages.
 - The dataset mixes historical entries, theory milestones, and speculative projections, so provenance needs care when editing values.
 - Third-party dependency `intersection-observer` is deprecated and probably unnecessary on modern browsers.
 - Network-dependent facts and source claims were not reverified online during this audit.
+- Narrow mobile viewports still crop the chart horizontally; Feature 5 owns responsive chart sizing.
 
 ## Immediate Next Moves
 
-1. Run the QA loop command for Feature 1, `Editorial north star and story contract`, currently marked `qa` in `docs/agentic-overhaul/missing-feature-list.md`.
-2. Use non-UI doc review plus `npm run validate` and `npm run build`; browser QA is not required for this docs-first feature.
-3. After merge, mark Feature 1 `done` and continue with Feature 2, `Data audit and claim correction`.
+1. Start Feature 2, `Data audit and claim correction`, from `docs/agentic-overhaul/missing-feature-list.md`.
+2. Use a documented calculation or script output plus `npm run validate` and `npm run build`.
+3. Keep runtime story-copy corrections scoped to Feature 2 and defer layout fixes to Feature 5.

@@ -9,7 +9,7 @@ This is the canonical feature map for the agentic buildout. Pick the first `todo
 | # | Status | Feature | Branch | Verification |
 | --- | --- | --- | --- | --- |
 | 0 | done | Agentic buildout operating plan | `docs/agentic-buildout-plan` | `npm run validate`, `npm run build` |
-| 1 | qa | Editorial north star and story contract | `feat/editorial-north-star` | non-UI doc review plus `npm run validate` |
+| 1 | done | Editorial north star and story contract | `feat/editorial-north-star` | non-UI doc review plus `npm run validate`, `npm run build`, browser smoke screenshots |
 | 2 | todo | Data audit and claim correction | `fix/data-claims-audit` | data script or documented calculation check, `npm run validate`, `npm run build` |
 | 3 | todo | Provenance schema and per-point citations | `feat/provenance-schema` | dataset validation plus browser QA of provenance display |
 | 4 | todo | Speculative mode trust reset | `fix/speculative-opt-in` | non-UI URL-state check plus browser QA |
@@ -31,7 +31,7 @@ This is the canonical feature map for the agentic buildout. Pick the first `todo
 
 ### 1. Editorial North Star And Story Contract
 
-- Status: `qa`
+- Status: `done`
 - Branch: `feat/editorial-north-star`
 - Goal: define the precise audience, claim, scope, and editorial promise before more UI work.
 - Why now: the current app feels like a mechanics demo because the thesis is overbroad and the audience is unclear.
@@ -46,6 +46,9 @@ This is the canonical feature map for the agentic buildout. Pick the first `todo
   - No data value changes except wording in docs.
 - Verification:
   - `npm run validate`
+  - `npm run build`
+  - Browser smoke QA screenshots at desktop and mobile viewports
+  - Browser console-error check
   - Manual doc review against `README.md`, `CURRENT_STATE.md`, and the feature map.
 - Docs:
   - `README.md`
@@ -54,6 +57,7 @@ This is the canonical feature map for the agentic buildout. Pick the first `todo
 - Implementation notes:
   - Added `docs/editorial/story-contract.md`.
   - Updated `README.md`, `AGENTS.md`, `CURRENT_STATE.md`, and validation to make the editorial contract discoverable.
+  - Prompt B resolved bot review docs consistency comments by preserving the dependency-vulnerability risk note and adding `npm run build` to Feature 1 verification.
   - Runtime story copy still contains old claims by design; Feature 2 and Feature 7 own those corrections.
 
 ### 2. Data Audit And Claim Correction
