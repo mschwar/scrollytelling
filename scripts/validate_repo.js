@@ -115,6 +115,7 @@ async function main() {
     'src/main.js',
     'src/App.svelte',
     'src/app.css',
+    'src/lib/story-state.js',
     'src/components/Background.svelte',
     'src/components/Chart.svelte',
     'src/components/Narrative.svelte',
@@ -122,6 +123,7 @@ async function main() {
     'src/components/Tooltip.svelte',
     'src/data/compute_history.json',
     'scripts/validate_repo.js',
+    'scripts/verify_story_state_sync.js',
     '.github/workflows/validate.yml',
     'docs/agentic-overhaul/2026-05-audit.md',
   ];
@@ -142,6 +144,11 @@ async function main() {
   assert(
     packageJson.scripts?.validate === 'node scripts/validate_repo.js',
     'package.json validate script should call scripts/validate_repo.js',
+  );
+  assert(
+    packageJson.scripts?.['verify:url-state'] ===
+      'node scripts/verify_story_state_sync.js',
+    'package.json should expose the URL state verification script',
   );
 
   const readme = await readText('README.md');

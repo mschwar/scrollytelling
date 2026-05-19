@@ -11,6 +11,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The app boots as a Svelte 5 client with `src/main.js` mounting `src/App.svelte`.
 - The repo contains the expected narrative components, data file, and fallback asset.
 - The new validation script runs locally and checks repo structure plus the compute dataset.
+- The app now preserves `step`, `linear`, and `speculative` state in the URL, and the share action copies that same view state.
 - The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands
@@ -19,6 +20,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - `npm run build` - passed.
 - `npm run preview` - available, not run during this audit.
 - `npm run validate` - added in this pass and passed.
+- `npm run verify:url-state` - available for non-UI verification of the story-state helpers.
 - `npm run deploy` - exists, not exercised here.
 
 ## Important Files And Directories
@@ -29,6 +31,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - `src/components/Scrolly.svelte` - Scrollama wrapper for step tracking.
 - `src/components/Tooltip.svelte` - tooltip presentation and compute readouts.
 - `src/components/Background.svelte` - low-contrast background silhouettes.
+- `src/lib/story-state.js` - query-string parsing and serialization for shareable story state.
 - `src/data/compute_history.json` - curated timeline and provenance fields.
 - `index.html` - app shell and noscript fallback image.
 - `scripts/validate_repo.js` - structural and data validation.

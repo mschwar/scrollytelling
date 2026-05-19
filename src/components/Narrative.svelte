@@ -199,7 +199,7 @@
     </div>
 
     <!-- Spacer to allow scrolling past last step -->
-    <div class="step spacer"></div>
+    <div class="spacer"></div>
 </div>
 
 <style>
@@ -217,7 +217,7 @@
         padding: 0 2rem;
     }
 
-    .step.spacer {
+    .spacer {
         min-height: 60vh; /* Extra scroll space */
     }
 

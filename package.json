@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "validate": "node scripts/validate_repo.js",
+    "verify:url-state": "node scripts/verify_story_state_sync.js",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
   },

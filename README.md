@@ -262,8 +262,21 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 
 - [ ] Keyboard navigation for data points
 - [ ] ARIA live regions and screen reader support
-- [ ] Shareable URL states with query parameters
 - [ ] Accessibility audit (WCAG AA compliance)
+
+### Shareable Story State
+
+The app now preserves the current story state in the URL query string so a
+specific view can be reloaded or shared directly.
+
+- `step` controls the narrative panel, from `0` to `4`
+- `linear=1` enables the linear "unzip" view
+- `speculative=0` hides speculative data points
+
+Example: `?step=3&linear=1&speculative=0`
+
+The Credits panel's Share button copies the current browser URL, so the active
+step and toggle state come along automatically.
 
 ---
 
@@ -344,7 +357,6 @@ License status is unresolved. `package.json` currently declares `ISC`, but there
 
 - **Alternative views**: Toggle linear vs. log scale
 - **Data export**: Download chart as SVG/PNG
-- **Shareable URLs**: Link to specific scroll steps
 - **Narration mode**: Auto-scroll through story
 - **3D mode**: Experimental WebGL rendering
 

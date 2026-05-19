@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- URL query parameters now preserve the active scroll step, linear toggle, and speculative data toggle so the current story state can be reloaded or shared directly.
+
 ### Planned for Phase 5 (Future)
 
 - Keyboard navigation for data points
 - ARIA live regions and screen reader support
-- Shareable URL states with query parameters
 - Advanced performance optimizations
 - Accessibility audit (WCAG AA compliance)
 
@@ -791,6 +794,6 @@ Refs: #issue-number (if applicable)
 
 - [ ] Alternative visualizations (linear scale toggle)
 - [ ] Data export functionality
-- [ ] Shareable URL states
+- [x] Shareable URL states (implemented via query parameters)
 - [ ] Embedded widget mode
 - [ ] Print-friendly stylesheet

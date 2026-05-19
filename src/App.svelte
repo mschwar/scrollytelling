@@ -1,23 +1,46 @@
 <script>
     import { tweened } from "svelte/motion";
     import { cubicOut } from "svelte/easing";
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import Background from "./components/Background.svelte";
     import Chart from "./components/Chart.svelte";
     import Scrolly from "./components/Scrolly.svelte";
     import Narrative from "./components/Narrative.svelte";
+    import { buildStoryUrl, readStoryState } from "./lib/story-state.js";
+
+    const MAX_TRACKED_STEP = 4;
+
+    const STEP_DOMAIN_PRESETS = {
+        0: { x: [1900, 1950], y: [0.5, 1e6] },
+        1: { x: [1940, 2015], y: [1e3, 1e18] },
+        2: { x: [1940, 2026], y: [1e3, 1e27] },
+        3: { x: [1940, 2026], y: [1e3, 1e27] },
+    };
+
+    const FALLBACK_DOMAIN = { x: [1900, 2026], y: [1, 1e27] };
+    const LINEAR_Y_DOMAIN = [0, 1e16];
+
+    function getStepDomains(step) {
+        return STEP_DOMAIN_PRESETS[step] || FALLBACK_DOMAIN;
+    }
+
+    const initialStoryState =
+        typeof window === "undefined"
+            ? readStoryState("", MAX_TRACKED_STEP)
+            : readStoryState(window.location.search, MAX_TRACKED_STEP);
 
     // Current scroll step (bound to Scrolly)
-    let currentStep = 0;
+    let currentStep = initialStoryState.step;
 
     // Linear scale toggle state
-    let isLinearMode = false;
+    let isLinearMode = initialStoryState.linear;
 
     // Speculative data toggle state (show by default for visibility)
-    let showSpeculative = true;
+    let showSpeculative = initialStoryState.speculative;
 
     // Off-chart message state
     let showOffChartMessage = false;
+    let hasHydratedStoryState = false;
 
     // Handle toggle from Narrative component
     function handleToggleScale() {
@@ -88,10 +111,50 @@
     onMount(() => {
         window.addEventListener("keydown", handleGlobalKeydown);
 
+        let cancelled = false;
+        tick().then(() => {
+            if (!cancelled) {
+                hasHydratedStoryState = true;
+            }
+        });
+
         return () => {
+            cancelled = true;
             window.removeEventListener("keydown", handleGlobalKeydown);
         };
     });
+
+    function syncStoryStateToUrl(
+        step,
+        linearMode,
+        speculativeMode,
+        hydrated,
+    ) {
+        if (!hydrated || typeof window === "undefined") {
+            return;
+        }
+
+        window.history.replaceState(
+            null,
+            "",
+            buildStoryUrl(
+                {
+                    step,
+                    linear: linearMode,
+                    speculative: speculativeMode,
+                },
+                window.location,
+                MAX_TRACKED_STEP,
+            ),
+        );
+    }
+
+    $: syncStoryStateToUrl(
+        currentStep,
+        isLinearMode,
+        showSpeculative,
+        hasHydratedStoryState,
+    );
 
     // Tweened domain stores for smooth animations
     const xDomainTween = tweened([1900, 2026], {
@@ -104,37 +167,15 @@
         easing: cubicOut,
     });
 
-    // Reactive domain switching based on scroll step
+    // Reactive domain switching based on scroll step and scale mode
     $: {
-        if (!showOffChartMessage && !isLinearMode) {
-            // Only auto-update if not in animation
-            switch (currentStep) {
-                case 0: // The Anchor: Zoom in on Human/ENIAC
-                    xDomainTween.set([1900, 1950]);
-                    yDomainTween.set([0.5, 1e6]);
-                    break;
-
-                case 1: // Moore's Law: Show the Orange Line
-                    xDomainTween.set([1940, 2015]);
-                    yDomainTween.set([1e3, 1e18]);
-                    break;
-
-                case 2: // The Break: Show Purple Explosion
-                    xDomainTween.set([1940, 2026]);
-                    yDomainTween.set([1e3, 1e27]);
-                    break;
-
-                case 3: // The Scale: Full view
-                    xDomainTween.set([1940, 2026]);
-                    yDomainTween.set([1e3, 1e27]);
-                    break;
-
-                default:
-                    xDomainTween.set([1900, 2026]);
-                    yDomainTween.set([1, 1e27]);
-            }
+        if (!showOffChartMessage) {
+            const { x, y } = getStepDomains(currentStep);
+            xDomainTween.set(x);
+            yDomainTween.set(isLinearMode ? LINEAR_Y_DOMAIN : y);
         }
     }
+
 </script>
 
 <main>
