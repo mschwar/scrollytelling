@@ -191,6 +191,7 @@ npm run dev
 4. ✅ Step 2: Purple AI dots "explode" upward
 5. ✅ Background icons fade (👤 → 🖥️ → 🏢)
 6. ✅ Text boxes have glassmorphic blur effect
+7. ✅ Step 4: The Credits step groups provenance into historical and speculative cards, and the speculative toggle hides the future estimates cleanly
 
 ### Debug Mode
 

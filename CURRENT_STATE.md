@@ -14,6 +14,7 @@ Project purpose: this repo is a Svelte 5 + Vite scrollytelling visualization abo
 - The app now preserves `step`, `linear`, and `speculative` state in the URL, and the share action copies that same view state.
 - Browser QA of the shareable URL state and keyboard navigation flow passed in headless Chromium against the built app, with screenshot evidence captured.
 - The Credits step now groups source labels into historical records and speculative estimates for provenance review.
+- Browser QA of the grouped provenance view passed in headless Chromium, including the speculative toggle state, with screenshot evidence captured.
 - The two-prompt feature queue now lives in `docs/agentic-overhaul/two-prompt-loop-plan.md`.
 
 ## Existing Commands
