@@ -1,111 +1,56 @@
+# Master Brief: Compute Scrollytelling Visualization
 
-## Project: The Compute "Phase Shift" Scrollytelling Visualization
-
-**Version:** 1.0  
-**Status:** Approved for Implementation
-
----
-
-## 1. The North Star
-
-We are building an interactive, scrollytelling data visualization that demystifies the explosive growth of AI training compute.
-
-**The Core Insight:** For 60 years, computers got faster at a predictable rate (Moore's Law). In 2012, that pattern broke. AI demanded a new scale of compute that defied historical trends.
-
-**The Problem:** The raw numbers (
-
-```
-10271027
-```
-
- FLOPs) are abstract and meaningless to the average human. A standard log-scale chart hides the drama of this explosion.
-
-**The Goal:** The user must not just see the line go up; they must feel the friction of the scale. They must understand that modern AI is not just "faster software," but a fundamental shift from "desktop computing" to "industrial-scale planetary computing."
+**Version:** 1.0
+**Status:** Initial Design Brief (superseded on editorial claims by [docs/editorial/story-contract.md](./docs/editorial/story-contract.md))
 
 ---
 
-## 2. Design Philosophy: "Constructive Incrementalism"
+## 1. Purpose, Inputs, and Outputs
 
-We are strictly adhering to a pedagogical framework called **Constructive Incrementalism**.
+This brief defines the initial product concept for an interactive scrollytelling chart tracking AI training compute growth. The application reads milestone records from `src/data/compute_history.json` and renders a scroll-driven SVG chart comparing model training runs against historical hardware growth.
 
-- **Do Not Deconstruct:** Do not show the final complex chart and ask the user to filter it.
-    
-- **Reconstruct:** We start with a blank void and a single unit (The Stick). We force the user to build the mental model step-by-step.
-    
-
-**The "Stick" to "Machine" Progression:**
-
-1. **The Stick:** One human doing math (1 FLOP).
-    
-2. **The Pattern:** The comfortable rise of Moore's Law (1940–2010).
-    
-3. **The Break:** The sudden, vertical departure of Deep Learning (2012–Present).
-    
-4. **The Cost:** The realization of the economic and energy price tag.
-    
+- **Core Observation:** For decades, single-system hardware performance grew along a steady trajectory often summarized as Moore's Law. After 2012, large deep-learning training runs scaled far faster by combining thousands of accelerators, longer runs, and larger budgets.
+- **Reader Challenge:** Raw counts such as `10^27` Floating-Point Operations (FLOPs) are abstract to non-specialist readers, and a logarithmic axis compresses huge differences into equal vertical steps.
+- **Design Goal:** Help readers inspect both the multi-decade trend and the physical gap between human arithmetic, early computers, and frontier training clusters.
 
 ---
 
-## 3. The User Journey
+## 2. Design Philosophy: Constructive Incrementalism
 
-The experience acts as a linear narrative controlled by the scroll bar.
+Instead of opening on an overloaded chart with complex filter menus, the narrative introduces visual layers one step at a time:
 
-- **Phase 1: Anchor (The Human Scale)**
-    
-    - Concept: "I understand what 1 calculation is."
-        
-    - Visual: A single dot vs. a human.
-        
-- **Phase 2: Establish Norms (Moore's Law)**
-    
-    - Concept: "Computers get 2x faster every 2 years. This is the law of the universe."
-        
-    - Visual: The orange dashed line. The hardware silhouette grows from Room (ENIAC) to Chip (Intel).
-        
-- **Phase 3: The Violation (Deep Learning)**
-    
-    - Concept: "Wait, the data points aren't following the orange line anymore. They are skyrocketing."
-        
-    - Visual: The purple dots detach and shoot upward.
-        
-- **Phase 4: The Reality Check (Scale)**
-    
-    - Concept: "Log scales are lying to me. The true scale is astronomical."
-        
-    - Visual: The 'Unzip' interaction where the chart attempts to unfold to linear scale.
-        
+1. **The Anchor:** One human performing arithmetic at roughly 1 Floating-Point Operation (FLOP) per second.
+2. **The Baseline:** Multi-decade hardware progress from 1940 to 2010.
+3. **The Divergence:** Post-2012 deep-learning training runs climbing steeply above that baseline.
+4. **The Scale and Cost:** Linear-scale comparisons, dollar estimates, and source provenance.
 
 ---
 
-## 4. Anti-Goals (Constraints)
+## 3. User Journey
 
-- **NO Linear Scales (as default):** The Y-Axis must be Logarithmic (
-    
-    ```
-    10x10x
-    ```
-    
-    ) by default. A linear chart of this data is unreadable.
-    
-- **NO 3D Graphics:** This is a clean, 2D SVG overlay. Do not use Three.js or WebGL unless absolutely necessary for performance.
-    
-- **NO User Input Forms:** This is a narrative experience. The user observes; they do not input data.
-    
-- **NO Information Dumping:** Do not show "Training Cost" or "Energy" until the narrative reaches Phase 4. Keep the UI minimal until the complexity is earned.
-    
+Scrolling drives five sequential views over a sticky chart:
+
+- **Phase 1 — Anchor (Human Scale):** Introduces 1 calculation per second as a single teaching dot.
+- **Phase 2 — Baseline (Hardware Trend):** Draws the orange dashed reference line alongside historical machines from Electronic Numerical Integrator and Computer (ENIAC) to desktop chips.
+- **Phase 3 — Divergence (Deep Learning):** Reveals purple model training runs detaching upward from the baseline.
+- **Phase 4 — Scale Check:** Provides a toggle that switches the vertical axis from logarithmic (`10x` steps) to linear scale.
+- **Phase 5 — Provenance:** Groups historical records and speculative estimates with source labels.
 
 ---
 
-## 5. Documentation Map
+## 4. Constraints and Anti-Goals
 
-This brief is part 1 of 5. Please ingest the files in this specific order to build the implementation plan:
+- **Logarithmic Default:** The vertical axis defaults to logarithmic (`10x` steps) because a linear axis compresses almost every historical point onto the baseline.
+- **2D SVG Rendering:** Render crisp 2D SVG geometry with Svelte and D3 rather than 3D WebGL scenes.
+- **Focused Controls:** Limit interactive controls to scale switching, speculative-point filtering, keyboard point navigation, and URL sharing.
+- **Progressive Disclosure:** Introduce cost estimates and provenance details in later narrative steps rather than crowding Step 0.
 
-1. 00_Master_Brief.md (Current): Philosophy & Goals.
-    
-2. 01_Narrative_Script.md: The specific steps, copy, and scroll triggers.
-    
-3. 02_Tech_Architecture.md: The Tech Stack (Svelte/D3) and Component Hierarchy.
-    
-4. 03_Data_Specs.md: The JSON schema, required columns, and math logic.
-    
-5. 04_Visual_Style_Guide.md: Colors, fonts, and animation physics.
+---
+
+## 5. Initial Brief Sequence
+
+1. [00_Master_Brief.md.md](./00_Master_Brief.md.md): Product goals and pedagogical sequence.
+2. [01_Narrative_Script.md.md](./01_Narrative_Script.md.md): Step-by-step script drafts and scroll triggers.
+3. [02_Tech_Architecture.md.md](./02_Tech_Architecture.md.md): Svelte and D3 component structure.
+4. [03_Data_Specs.md.md](./03_Data_Specs.md.md): Dataset fields and baseline formulas.
+5. [04_Visual_Style_Guide.md.md](./04_Visual_Style_Guide.md.md): Color palette, typography, and motion timing.

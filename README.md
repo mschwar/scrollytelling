@@ -1,66 +1,67 @@
 # AI Training Compute Scrollytelling Visualization
 
-> An interactive data visualization showing how large AI training runs grew far faster than a Moore's Law-style hardware baseline.
-
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
-
 ![Scrollytelling Demo](https://img.shields.io/badge/demo-scroll--driven-purple)
 
----
+## TL;DR
 
-Current repo truth and contributor bootstrap notes live in [CURRENT_STATE.md](./CURRENT_STATE.md) and [AGENTS.md](./AGENTS.md). The editorial source of truth lives in [docs/editorial/story-contract.md](./docs/editorial/story-contract.md).
+This Svelte and D3 web app reads curated compute milestones from `src/data/compute_history.json`, validates dataset fields and links with `npm run validate`, and renders a five-step interactive chart comparing model training runs against a hardware growth baseline.
 
-## 📊 The Story
+## Inputs, Checks, and Outputs
 
-This visualization tells a data-driven story in five acts:
+Current repository status and contributor rules live in [CURRENT_STATE.md](./CURRENT_STATE.md) and [AGENTS.md](./AGENTS.md). The editorial source of truth lives in [docs/editorial/story-contract.md](./docs/editorial/story-contract.md).
 
-1. **Anchor**: Give the reader a rough human-scale baseline for FLOP.
+- **Inputs**: Milestone records in `src/data/compute_history.json`, URL query parameters (`step`, `linear`, `speculative`), and scroll or keyboard interactions.
+- **Checks**: Repository structure, link targets, and dataset provenance fields via `npm run validate`; URL state helpers via `npm run verify:url-state`; documentation hygiene via `/usr/bin/python3 -m unittest tests/test_doc_hygiene.py -v`.
+- **Outputs**: A static bundle in `dist/` (`npm run build`) with a sticky D3 SVG chart, five narrative panels, scale and speculative-data toggles, focusable data points, and grouped provenance cards.
+
+## The Story
+
+This visualization presents compute growth in five acts, using Floating-Point Operation (FLOP) counts to measure total arithmetic operations:
+
+1. **Anchor**: Give the reader a rough human-scale baseline for 1 FLOP.
 2. **Baseline**: Show the older hardware-progress intuition often summarized as Moore's Law.
-3. **Inflection**: Show how deep-learning training runs visibly diverged from that baseline.
-4. **Scale**: Make the modern magnitude inspectable through defensible comparisons.
-5. **Trust**: Separate historical, estimated, speculative, and pedagogical data so the chart can be audited.
+3. **Inflection**: Show how deep-learning training runs visibly diverged from that baseline after 2012.
+4. **Scale**: Make the modern magnitude inspectable through documented comparisons and scale switching.
+5. **Trust**: Separate historical, estimated, speculative, and pedagogical data so readers can audit the chart.
 
-As you scroll, the chart dynamically zooms to highlight each milestone. Interactive tooltips reveal scale analogies and source labels, and the linear-scale interaction demonstrates why a log scale is necessary for the current range.
+As you scroll, the chart zooms to frame each milestone. Interactive tooltips display scale analogies and source labels, while the linear-scale toggle shows why a logarithmic axis is required across 26 orders of magnitude.
 
-The current story state is shareable through the URL. `step`, `linear`, and `speculative` are encoded in the query string so a copied link reopens the same view.
+The current story state is shareable through the URL query string (`step`, `linear`, and `speculative`) so a copied link reopens the same view.
 
-The production site auto-deploys from pushes to `main` through GitHub Actions and is published at <https://mschwar.github.io/scrollytelling/>.
+The production site deploys from pushes to `main` through GitHub Actions at <https://mschwar.github.io/scrollytelling/>.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+ ([Download](https://nodejs.org/))
+- Python 3.10+ for documentation hygiene checks
 - Git ([Download](https://git-scm.com/))
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/mschwar/scrollytelling.git
 cd scrollytelling
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-Open **<http://localhost:5173>** in your browser.
+Open <http://localhost:5173> in your browser.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### Tech Stack
 
-- **Svelte 5** - Reactive UI framework
-- **D3.js v7** - Data visualization (scales, shapes, axes)
-- **Scrollama** - Scroll-driven narrative engine
-- **Vite** - Lightning-fast build tool
+- **Svelte 5**: Reactive user interface framework
+- **D3.js v7**: Data visualization scales, shapes, and axes
+- **Scrollama**: Scroll-driven step detection
+- **Vite**: Frontend bundler and local development server
 
 ### Component Hierarchy
 
@@ -84,30 +85,30 @@ export let yDomain = [1e0, 1e27];
 $: xScale = scaleLinear().domain(xDomain).range([0, innerWidth]);
 ```
 
-Enables animations without component reloads.
+Reactive domain bindings update axis positions without reloading components.
 
 #### 2. Tweened Store Interpolation
 
 ```svelte
 // App.svelte
-const yDomainTween = tweened([1e0, 1e27], { 
-  duration: 1200, 
-  easing: cubicOut 
+const yDomainTween = tweened([1e0, 1e27], {
+  duration: 1200,
+  easing: cubicOut
 });
 
 // On scroll step change
-yDomainTween.set([1e3, 1e18]); // Smoothly animates
+yDomainTween.set([1e3, 1e18]);
 ```
 
 #### 3. Three-Layer Z-Index Architecture
 
-- **z-index 0**: Background (fixed, subtle icons)
-- **z-index 1**: Chart (sticky, remains visible)
-- **z-index 2**: Text (scrollable, glassmorphic panels)
+- **z-index 0**: Background (`Background.svelte`, fixed low-contrast silhouettes)
+- **z-index 1**: Chart (`Chart.svelte`, sticky SVG canvas)
+- **z-index 2**: Narrative (`Narrative.svelte`, scrollable step cards)
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 scrollytelling/
@@ -116,13 +117,25 @@ scrollytelling/
 │   │   ├── Chart.svelte          # D3 visualization (reactive scales)
 │   │   ├── Background.svelte     # Step-based hardware icons
 │   │   ├── Scrolly.svelte        # Scrollama wrapper
-│   │   └── Narrative.svelte      # Text step panels
+│   │   ├── Narrative.svelte      # Text step panels
+│   │   └── Tooltip.svelte        # Hover and focus readouts
 │   ├── data/
-│   │   └── compute_history.json  # 8 milestone data points
-│   ├── App.svelte                # State management & domain switching
+│   │   └── compute_history.json  # Curated milestone dataset
+│   ├── lib/
+│   │   ├── provenance.js         # Grouped source summary builder
+│   │   └── story-state.js        # URL query-string state helpers
+│   ├── App.svelte                # State management and domain switching
 │   ├── main.js                   # Entry point
 │   └── app.css                   # Global styles
-├── CHANGELOG.md                  # Version history & design decisions
+├── docs/
+│   └── editorial/
+│       └── story-contract.md     # Editorial source of truth
+├── scripts/
+│   ├── validate_repo.js          # Structural and dataset validator
+│   └── verify_story_state_sync.js
+├── tests/
+│   └── test_doc_hygiene.py       # Zero-dependency doc hygiene gate
+├── CHANGELOG.md                  # Historical version log
 ├── package.json
 ├── vite.config.js
 └── svelte.config.js
@@ -130,9 +143,9 @@ scrollytelling/
 
 ---
 
-## 📈 Data Schema
+## Data Schema
 
-Each data point in `compute_history.json` follows this structure:
+Each entry in `src/data/compute_history.json` follows this structure:
 
 ```json
 {
@@ -144,26 +157,28 @@ Each data point in `compute_history.json` follows this structure:
   "training_cost_usd": 100000000,
   "category": "Deep Learning",
   "hardware_analogy": "The Galaxy",
+  "human_analogy": "600 million human lifetimes",
+  "source": "Epoch AI",
   "is_highlight": true
 }
 ```
 
-**Key Milestones:**
+**Selected Milestones:**
 
 - The Human (1900, 1 FLOP)
-- ENIAC (1945, 10^5 FLOPs)
-- AlexNet (2012, 10^18 FLOPs) ← **THE BREAK**
-- GPT-4 (2023, 2×10^25 FLOPs)
+- Electronic Numerical Integrator and Computer (ENIAC) (1945, 10^5 FLOPs)
+- AlexNet (2012, 10^18 FLOPs) — post-2012 inflection point
+- GPT-4 (2023, 2 x 10^25 FLOPs)
 
 ---
 
-## 🎨 Visual Design System
+## Visual Design System
 
 ### Color Palette
 
-- **Safety Orange** (#F5A623): Moore's Law, Historical era
-- **Electric Purple** (#BD10E0): Deep Learning era, AI models
-- **Off-White** (#F9F9F9): Background (academic paper aesthetic)
+- **Safety Orange** (`#F5A623`): Moore's Law baseline and pre-2012 hardware milestones
+- **Electric Purple** (`#BD10E0`): Deep-learning era training runs
+- **Off-White** (`#F9F9F9`): Paper-inspired canvas background
 
 ### Typography
 
@@ -173,239 +188,95 @@ Each data point in `compute_history.json` follows this structure:
 
 ### Motion Design
 
-- **Duration**: 1200ms (empirically tested for "heavy camera" feel)
-- **Easing**: cubicOut (fast start, slow settle)
-- **Transitions**: 800ms for background icons
+- **Duration**: 1200ms camera domain interpolation
+- **Easing**: `cubicOut` (fast start, gradual settle)
+- **Background Transitions**: 800ms opacity fade for hardware silhouettes
 
 ---
 
-## 🧪 Testing
+## Verification and Testing
 
-### Manual Testing Checklist
+### Automated Checks
+
+```bash
+npm run validate
+npm run verify:url-state
+/usr/bin/python3 -m unittest tests/test_doc_hygiene.py -v
+```
+
+### Manual Verification Checklist
 
 ```bash
 npm run dev
 ```
 
-1. ✅ Scroll down slowly - Chart should zoom smoothly
-2. ✅ Step 0: Human baseline (1 FLOP) is clearly visible
-3. ✅ Step 1: Orange Moore's Law line appears
-4. ✅ Step 2: Purple AI dots "explode" upward
-5. ✅ Background icons fade (👤 → 🖥️ → 🏢)
-6. ✅ Text boxes have glassmorphic blur effect
-7. ✅ Step 4: The Credits step groups provenance into historical and speculative cards, and the speculative toggle hides the future estimates cleanly
-
-### Debug Mode
-
-Enable Scrollama visual debugger:
-
-```svelte
-// Scrolly.svelte
-.setup({
-  debug: true  // Shows step boundaries
-})
-```
+1. Scroll down slowly and confirm the chart zooms smoothly across steps.
+2. Step 0: Confirm the human baseline (1 FLOP) is visible.
+3. Step 1: Confirm the orange Moore's Law baseline line renders.
+4. Step 2: Confirm purple deep-learning points diverge above the baseline.
+5. Step 3: Confirm the linear-scale button and speculative-data checkbox update the chart.
+6. Step 4: Confirm the Credits card groups provenance into historical records and speculative estimates.
 
 ### URL State
 
-- Copy the URL after changing the step, scale mode, or speculative toggle.
-- Reopening that link restores the same story state.
-- `npm run verify:url-state` checks the URL-state helper logic directly.
+- Changing the active step, scale mode, or speculative toggle updates `?step=...&linear=...&speculative=...` in the browser address bar.
+- Reopening a copied link restores the same step and toggle state.
+- `npm run verify:url-state` tests URL parsing, clamping, and serialization directly.
 
-### Keyboard Navigation
+### Keyboard Navigation and Screen Readers
 
-- Tab reaches the Scale panel controls, then `Jump to Data Points` hands
-  keyboard focus into the chart.
-- The `Jump to Data Points` button responds to click, Enter, and Space.
-- It is the explicit entry point for keyboard users moving from the narrative
-  into the chart.
-- Use `Arrow Left` / `Arrow Right` or `Arrow Up` / `Arrow Down` to move
-  between data points once focus is in the chart.
-- `Home` and `End` jump to the first or last visible point.
-- `Enter` or `Space` keeps the current point open, and `Escape` clears the
-  tooltip.
-- The `L` shortcut still toggles the linear scale outside editable fields.
-
-## 🚢 Deployment
-
-GitHub Actions builds and deploys the production site automatically on pushes to `main`.
-
-- Production URL: <https://mschwar.github.io/scrollytelling/>
-- Build command: `npm run build`
-- Local production preview: `npm run preview`
+- `Tab` reaches the Scale panel controls, and `Jump to Data Points` moves focus into the SVG chart via click, `Enter`, or `Space`.
+- `Arrow Left`, `Arrow Right`, `Arrow Up`, and `Arrow Down` move between visible milestones; `Home` and `End` jump to the endpoints.
+- `Enter` or `Space` pins the active tooltip, `Escape` clears it, and `L` toggles linear mode outside text inputs.
+- Accessible Rich Internet Applications (ARIA) live regions announce the active step (`aria-current="step"`) and focused chart values.
 
 ---
 
-## 🔧 Development Scripts
+## Development Scripts and Deployment
 
 ```bash
-# Start dev server with hot reload
+# Start local development server
 npm run dev
 
-# Build for production
+# Build static production assets into dist/
 npm run build
 
-# Preview production build
+# Preview the production build locally
 npm run preview
 
-# Save git checkpoint (Windows)
-save_checkpoint.bat
-
-# Validate the repo state
+# Validate repository files, links, and dataset records
 npm run validate
+
+# Verify URL query-string state helpers
+npm run verify:url-state
 ```
 
----
-
-## 📋 Roadmap
-
-See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
-
-### Phase 1 ✅ (v0.1.0)
-
-- Static D3 chart with reactive scales
-- Logarithmic Y-axis (1 → 10^27 FLOPs)
-- Moore's Law reference line
-- 3-layer architecture foundation
-
-### Phase 2 ✅ (v0.2.0)
-
-- Scrollama integration
-- Tweened domain animations
-- Glassmorphic narrative panels
-- Background silhouette fading
-
-### Phase 3 ✅ (v0.3.0)
-
-- Interactive tooltips with human scale analogies
-- Linear scale toggle ("unzip" the logarithmic compression)
-- Industrial futurism design system
-- Elastic mouse-following tooltip animations
-- Hover states and micro-animations
-
-### Phase 4 ✅ (v0.4.0)
-
-- Mobile responsive layout (40vh sticky chart)
-- Touch interaction system (tap-to-toggle tooltips)
-- Production deployment configuration
-- Credits footer with data sources
-- GitHub Pages ready builds
-
-### Phase 5 (Future)
-
-- [x] Keyboard navigation for data points
-- [x] ARIA live regions and screen reader support
-- [ ] Accessibility audit (WCAG AA compliance)
-
-### Screen Reader Support
-
-- The current story step is announced through a polite live region.
-- The chart announces focused data points and state changes as you move
-  through the visualization.
-- SVG data points are explicitly focusable so keyboard users can land on the
-  chart consistently across browsers.
-- The active narrative panel is marked with `aria-current="step"` so screen
-  readers can track the story position.
-
-### Shareable Story State
-
-The app now preserves the current story state in the URL query string so a
-specific view can be reloaded or shared directly.
-
-- `step` controls the narrative panel, from `0` to `4`
-- `linear=1` enables the linear "unzip" view
-- `speculative=0` hides speculative data points
-
-Example: `?step=3&linear=1&speculative=0`
-
-The Credits panel's Share button copies the current browser URL, so the active
-step and toggle state come along automatically.
+GitHub Actions builds and publishes `dist/` to <https://mschwar.github.io/scrollytelling/> on pushes to `main`.
 
 ---
 
-## 🤝 Contributing
+## Historical Design Briefs and Changelog
 
-This is a learning project demonstrating scrollytelling techniques. If you'd like to extend it:
+Initial planning briefs remain on disk for reference:
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/amazing-feature`)
-3. Commit your changes (see commit format in [CHANGELOG.md](./CHANGELOG.md))
-4. Push to the branch (`git push origin feat/amazing-feature`)
-5. Open a Pull Request
+- [00_Master_Brief.md.md](./00_Master_Brief.md.md)
+- [01_Narrative_Script.md.md](./01_Narrative_Script.md.md)
+- [02_Tech_Architecture.md.md](./02_Tech_Architecture.md.md)
+- [03_Data_Specs.md.md](./03_Data_Specs.md.md)
+- [04_Visual_Style_Guide.md.md](./04_Visual_Style_Guide.md.md)
 
----
-
-## 📚 Technical Decisions
-
-### Why Svelte over React?
-
-- Reactive statements (`$:`) eliminate useEffect dependency hell
-- Smaller bundle size (no virtual DOM)
-- Built-in motion/tweening library
-- Declarative DOM updates ideal for data visualization
-
-### Why Logarithmic Y-Axis?
-
-- Linear scale cannot display 26 orders of magnitude (1 → 10^27)
-- Log scale compresses exponential growth into visual space
-- Aligns with scientific thinking (powers of 10)
-
-### Why Scrollama?
-
-- Industry standard (used by NYT, FiveThirtyEight)
-- Intersection Observer API (performant)
-- Simple API surface area
-
-### Why 1200ms Animation Duration?
-
-Empirically tested:
-
-- 600ms: Too snappy, feels buggy
-- 1000ms: Better, but rushed
-- **1200ms**: Perfect "heavy camera" feel ✅
-- 1800ms: Too slow, loses engagement
-
-See [CHANGELOG.md](./CHANGELOG.md) for more architectural rationale.
+See [CHANGELOG.md](./CHANGELOG.md) for historical release notes and [CURRENT_STATE.md](./CURRENT_STATE.md) for current repository status.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments and Data Sources
 
-### Design Inspiration
-
-- [NYT Graphics](https://www.nytimes.com/interactive) - Scrollytelling patterns
-- [Our World in Data](https://ourworldindata.org/) - Compute visualizations
-- [FiveThirtyEight](https://fivethirtyeight.com/) - Data-driven narratives
-
-### Data Sources & Provenance
-
-- [Epoch AI](https://epochai.org/) - ML compute dataset
-- [Our World in Data](https://ourworldindata.org/technological-progress) - Historical compute
-- The Credits step now groups source labels into historical records and speculative estimates for quicker provenance review.
+- [Epoch AI](https://epochai.org/) — Machine learning compute dataset
+- [Our World in Data](https://ourworldindata.org/technological-progress) — Historical computing benchmarks
+- Editorial scrollytelling inspiration from [The New York Times](https://www.nytimes.com/interactive) and [FiveThirtyEight](https://fivethirtyeight.com/)
 
 ---
 
-## 📄 License
+## License
 
-License status is unresolved. `package.json` currently declares `ISC`, but there is no canonical `LICENSE` file checked in. See [CURRENT_STATE.md](./CURRENT_STATE.md) for the current decision point.
-
----
-
-## 🐛 Known Issues
-
-- None in v0.4.0 (Phase 4 complete and verified)
-
----
-
-## 💡 Future Ideas
-
-- **Alternative views**: Toggle linear vs. log scale
-- **Data export**: Download chart as SVG/PNG
-- **Narration mode**: Auto-scroll through story
-- **3D mode**: Experimental WebGL rendering
-
----
-
-### Built with ❤️ using Svelte + D3.js
-
-For questions or feedback, open an issue on GitHub.
+License status is unresolved. `package.json` declares `"ISC"`, while no `LICENSE` file is checked into the repository. See [CURRENT_STATE.md](./CURRENT_STATE.md) before redistributing.

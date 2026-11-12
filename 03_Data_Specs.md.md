@@ -1,28 +1,25 @@
-## Project: The Compute "Phase Shift" Scrollytelling Visualization
+# Data Specifications: Compute Scrollytelling Visualization
 
-**Version:** 1.0  
-**Dependency:** Reads 00_Master_Brief.md, 02_Tech_Architecture.md
+**Version:** 1.0
+**Dependency:** Companion to [00_Master_Brief.md.md](./00_Master_Brief.md.md) and [02_Tech_Architecture.md.md](./02_Tech_Architecture.md.md)
 
 ---
 
 ## 1. Data Source Strategy
 
-The application will load a single static JSON file (compute_history.json). We are not connecting to a live API.
+The client loads a static JSON dataset from `src/data/compute_history.json` with no runtime external network calls.
 
-- **Source:** The data is a composite of historical records (Epoch AI, Our World in Data) and manually curated "Anchor Points."
-    
-- **Parsing:** Dates must be parsed as decimal years (e.g., 2023.25 for April 2023) to allow precise plotting on the X-Axis.
-    blah blah blah
+- **Sources:** Combines historical hardware benchmarks, published model training estimates (Epoch AI and Our World in Data), teaching anchors, and labeled speculative projections.
+- **Date Encoding:** Encodes dates as decimal years (for example, `2023.25` for April 2023) for continuous horizontal plotting.
+- **Validation:** Run `npm run validate` (`scripts/validate_repo.js`) to verify required fields, finite numeric values, unique `id` keys, and speculative flags.
 
 ---
 
 ## 2. JSON Schema Definition
 
-The code must expect the following array structure. Do not infer types; enforce them.
+Each object in `src/data/compute_history.json` follows this record shape, measuring total arithmetic in Floating-Point Operations (FLOPs):
 
-codeJSON
-
-```
+```json
 [
   {
     "id": "gpt-4",
@@ -33,6 +30,8 @@ codeJSON
     "training_cost_usd": 100000000,
     "category": "Deep Learning",
     "hardware_analogy": "The Galaxy",
+    "human_analogy": "600 million human lifetimes",
+    "source": "Epoch AI",
     "is_highlight": true
   },
   {
@@ -44,6 +43,8 @@ codeJSON
     "training_cost_usd": 6000000,
     "category": "Historical",
     "hardware_analogy": "Vacuum Tube Room",
+    "human_analogy": "1.1 days of human math",
+    "source": "Historical archive",
     "is_highlight": true
   }
 ]
@@ -51,95 +52,44 @@ codeJSON
 
 ### Field Dictionary
 
-- **date_decimal (Float):** Used for X-Position.
-    
-- **training_compute_flops (Float):** The raw FLOP count. Used for Y-Position.
-    
-- **category (String):** Determines the color.
-    
-    - Values: "Historical" (Pre-2012) or "Deep Learning" (Post-2012).
-        
-- **is_highlight (Boolean):** If true, always show the label. If false, only show point (label appears on hover). This prevents UI clutter.
-    
+- `date_decimal` (number): Decimal year plotted on the horizontal axis.
+- `training_compute_flops` (number): Total Floating-Point Operation (FLOP) count plotted on the vertical axis.
+- `category` (string): One of `"Historical"`, `"Deep Learning"`, `"Theory"`, or `"Speculative"`.
+- `is_highlight` (boolean): Always renders a persistent text label when `true`; shows details on hover or focus when `false`.
+- `is_speculative` (boolean, required when `category` is `"Speculative"`): Marks projected points controlled by the speculative toggle.
+- `source` (string): Provenance label grouped in Step 4 by `src/lib/provenance.js`.
 
 ---
 
-## 3. The "Human Scale" Math
+## 3. Scale and Baseline Formulas
 
-The frontend must perform specific calculations to generate the "Intuition Metrics" used in the sidebar.
+### Formula 1: Human-Years Analogy
 
-**Formula 1: Human-Years**  
-To convert FLOPs to "Time it would take a human":  
+To express FLOP totals as equivalent continuous human calculation time:
 
+```text
+Human_Years = FLOPs / (HUMAN_SPEED * SECONDS_PER_YEAR)
 ```
-Human Years=FLOPsHuman Speed×Seconds in YearHuman Years=Human Speed×Seconds in YearFLOPs​
+
+- `HUMAN_SPEED = 1` FLOP per second.
+- `SECONDS_PER_YEAR = 31,536,000`.
+- Example: `2e25` FLOPs equals roughly `6.3e17` human years.
+
+### Formula 2: Moore's Law Reference Curve
+
+To plot the counterfactual hardware-progress line doubling every two years from a reference point:
+
+```text
+Baseline_FLOPs(year) = Anchor_FLOPs * 2 ^ ((year - Anchor_Year) / 2)
 ```
-
-- **Constant:** HUMAN_SPEED = 1 FLOP/second.
-    
-- **Constant:** SECONDS_YEAR = 31,536,000.
-    
-- Example: GPT-4 (
-    
-    ```
-    2×10252×1025
-    ```
-    
-    ) 
-    
-    ```
-    ≈≈
-    ```
-    
-     
-    
-    ```
-    6×10176×1017
-    ```
-    
-     Human Years.
-    
-
-**Formula 2: Moore's Law Baseline (The Orange Line)**  
-To draw the "Counterfactual" line (where we should be if Deep Learning didn't happen):
-
-- **Anchor Point:** 2012 (AlexNet).
-    
-- **Slope:** 
-    
-    ```
-    2×2×
-    ```
-    
-     every 2 years.
-    
-- **Equation:** 
-    
-    ```
-    Y=AlexNet_FLOPs×2CurrentYear−20122Y=AlexNet_FLOPs×22CurrentYear−2012​
-    ```
-    
-- Usage: Use this function to plot the dashed orange line extending from 2012 to 2026.
-    
 
 ---
 
-## 4. Required Data Points (The Narrative Anchors)
+## 4. Narrative Anchor Milestones
 
-Ensure the dataset includes these specific milestones to drive the story:
-
-1. **The Start:** ENIAC (1946) - 
-    
-    ```
-    105105
-    ```
-    
-2. **The Desktop Era:** Intel 486 (1989)
-    
-3. **The Chess King:** Deep Blue (1997)
-    
-4. **The Break:** AlexNet (2012) - The first point to jump the curve.
-    
-5. **The Takeoff:** AlphaGo (2016)
-    
-6. **The Present:** GPT-4 / Gemini Ultra (2023/2024) - The outlier.
+1. **Human Anchor (1900):** Teaching baseline at `1` FLOP.
+2. **Electronic Numerical Integrator and Computer (ENIAC) (1945):** Early electronic computer milestone (`10^5` FLOPs).
+3. **Desktop Era (1989):** Microprocessor transition.
+4. **Deep Blue (1997):** Specialized chess supercomputer.
+5. **AlexNet (2012):** GPU-trained convolutional network marking the deep-learning inflection.
+6. **AlphaGo (2016) and GPT-4 (2023):** Large-cluster training runs illustrating modern scale.

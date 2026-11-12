@@ -10,7 +10,7 @@ AI Training Compute Outran The Old Hardware Story
 
 ## Audience
 
-The primary reader is a technically curious non-specialist: someone who understands that AI progress depends on chips and data centers, but does not already have a mental model for training compute measured in FLOP.
+The primary reader is a technically curious non-specialist: someone who understands that AI progress depends on chips and data centers, but does not already have a mental model for training compute measured in Floating-Point Operations (FLOPs).
 
 The secondary reader is an evaluator of the project: someone checking whether the data, claims, and interface are credible enough to trust and share.
 
@@ -36,11 +36,11 @@ Reason: Moore's Law is a hardware trend about transistor density or related hard
 
 By the end, the reader should be able to say:
 
-- FLOP is a count of computation, not intelligence.
+- A Floating-Point Operation (FLOP) is a count of computation, not intelligence.
 - A log scale is necessary because the range spans many orders of magnitude.
 - The post-2012 story is about training-run scale, not just chip improvement.
 - Some modern and future numbers are estimates, so provenance and confidence matter.
-- The chart is an explanation of scale, not a prediction of AGI.
+- The chart is an explanation of scale, not a prediction of Artificial General Intelligence (AGI).
 
 ## Five-Act Story
 

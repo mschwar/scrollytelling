@@ -1,154 +1,62 @@
-## Project: The Compute "Phase Shift" Scrollytelling Visualization
+# Visual Style Guide: Compute Scrollytelling Visualization
 
-**Version:** 1.0  
-**Dependency:** Reads 00_Master_Brief.md
+**Version:** 1.0
+**Dependency:** Companion to [00_Master_Brief.md.md](./00_Master_Brief.md.md)
 
 ---
 
-## 1. Core Aesthetic: "Industrial Futurism"
+## 1. Core Aesthetic: Editorial Diagram
 
-The look should feel precise, mathematical, and slightly intimidating. It is not a cartoon; it is a blueprint of a Phase Shift.
+The visual design aims for an academic paper and engineering schematic aesthetic rather than a dark-mode dashboard:
 
-- **Background:** Off-White / Paper (#F9F9F9).
-    
-    - Why: Mimics an academic paper or engineering schematic. Dark mode is too "Matrix." We want "Scientific."
-        
-- **Grid Lines:** Very subtle light gray (#E5E5E5).
-    
+- **Canvas Background:** Off-White (`#F9F9F9`) for high-contrast legibility.
+- **Grid Lines:** Subtle light gray (`#E5E5E5`).
 - **Typography:**
-    
-    - **Headings:** Inter or Helvetica Neue (Bold).
-        
-    - **Data Labels:** Roboto Mono or JetBrains Mono (Technical feel).
-        
+  - **Headings and Narrative Copy:** `Inter` or `Helvetica Neue`.
+  - **Axis Ticks and Numeric Readouts:** `JetBrains Mono` or `Roboto Mono`.
 
 ---
 
-## 2. Color Palette (Semantic)
+## 2. Semantic Color Palette
 
-Colors are used to tell the story, not for decoration.
+Colors encode dataset eras and provenance status:
 
-**A. The "Safe" Era (Historical / Moore's Law)**
-
-- **Color:** **Safety Orange** (#F5A623)
-    
-- **Meaning:** Predictable, Warning-but-safe, Industrial.
-    
-- **Usage:** The Dashed Line, Pre-2012 dots, The "Hardware Silhouette" graphics.
-    
-
-**B. The "Phase Shift" Era (Deep Learning)**
-
-- **Color:** **Electric Purple** (#BD10E0 or #9013FE)
-    
-- **Meaning:** Artificial, Magic, Deviation, Dangerous.
-    
-- **Usage:** Post-2012 dots, The "Break" annotation.
-    
-
-**C. The "Cost" Gradient (Step 4)**
-
-- **Scale:** Light Green (#B8E986) 
-    
-    ```
-    →→
-    ```
-    
-     Dark Money Green (#417505).
-    
-- **Usage:** Dots recolor to this scale in the final step.
-    
+- **Historical Hardware and Baseline (`#F5A623`, Safety Orange):** Used for the dashed Moore's Law reference curve and pre-2012 milestones.
+- **Deep Learning Era (`#BD10E0` / `#9013FE`, Electric Purple):** Used for post-2012 neural network training runs and primary focus outlines.
+- **Speculative Estimates (`#9B9B9B`, Neutral Gray Dashed):** Used for opt-in future projections so they remain visually distinct from historical records.
+- **Cost Context (`#B8E986` to `#417505`):** Optional green accent range reserved for cost comparisons.
 
 ---
 
-## 3. Motion Physics (The "Feel")
+## 3. Motion Timing
 
-Svelte transitions must be tuned to feel "Heavy."
+Svelte domain tweens are tuned for steady, readable camera movement:
 
-- **The Zoom (Y-Axis Scaling):**
-    
-    - **Easing:** cubic-bezier(0.25, 1, 0.5, 1) (Fast start, slow settle).
-        
-    - **Duration:** 1200ms.
-        
-    - Effect: The chart shouldn't just "snap"; it should feel like the camera is pulling back rapidly to capture a rocket taking off.
-        
-- **The "Unzip" (Log to Linear):**
-    
-    - **Visual:** The Y-axis stretches.
-        
-    - **Animation:** The top dots must accelerate upward exponentially.
-        
-    - **Fade:** As the dots leave the viewport, they should leave a "motion blur" or fade out, emphasizing they are gone forever.
-        
+- **Vertical Domain Zoom:** `1200ms` duration with `cubicOut` (`cubic-bezier(0.25, 1, 0.5, 1)`), starting briskly and settling smoothly.
+- **Scale Toggle (Logarithmic to Linear):** Stretches the vertical axis smoothly so readers see higher-compute points accelerate above the viewport rather than disappear abruptly.
 
 ---
 
-## 4. UI Component Styling
+## 4. Component Styling
 
-**The Scrolling Text (Sidebar)**
+### Scrolling Narrative Cards
 
-- **Style:** Glassmorphism.
-    
-    - background: rgba(255, 255, 255, 0.9);
-        
-    - backdrop-filter: blur(10px);
-        
-    - border-left: 4px solid #333; (The "Stick" design motif).
-        
-- **Shadow:** Deep drop shadow to separate it from the chart.
-    
+- Semi-opaque white surface (`rgba(255, 255, 255, 0.85)`) with `backdrop-filter: blur(8px)`, subtle shadow, and a `4px` left border (`#333333`).
 
-**The Tooltips**
+### Tooltips
 
-- **Behavior:** Follow mouse with 20ms lag (elastic feel).
-    
-- **Content:**
-    
-    - **Header:** Model Name (Bold).
-        
-    - **Sub:** Year.
-        
-    - **Detail:** FLOPs (Scientific Notation).
-        
-    - **Analogy:** "Equivalent to [X] Humans."
-        
+- Track pointer or focused SVG circle position smoothly.
+- Display model name, year, Floating-Point Operation (FLOP) total in scientific notation, source label, and scale analogy.
 
-**The Axes**
+### Axes
 
-- **X-Axis:** Bottom, sticky.
-    
-- **Y-Axis:** Left, sticky.
-    
-- **Ticks:** formatted as powers of 10 (
-    
-    ```
-    10151015
-    ```
-    
-    , 
-    
-    ```
-    10201020
-    ```
-    
-    ).
-    
-    - Important: Do not clutter with intermediate ticks (
-        
-        ```
-        2×10152×1015
-        ```
-        
-        ). Keep it clean.
-        
+- Keep horizontal (year) and vertical (FLOPs) axes legible against the sticky canvas.
+- Format logarithmic vertical ticks cleanly as powers of ten (`10^15`, `10^20`) without crowding intermediate multipliers (`2 x 10^15`).
 
 ---
 
-## 5. Final Checks
+## 5. Visual Quality Checks
 
-- Ensure Purple dots sit on top of Orange lines (Z-Index).
-    
-- Ensure text contrasts passes WCAG AA standards.
-    
-- Ensure the "Hardware Silhouettes" are low-contrast (opacity 0.1) so they don't fight the data points.
+- Render deep-learning circles above the dashed reference line in SVG painter order.
+- Maintain WCAG 2.2 AA contrast ratios (`>= 4.5:1`) for narrative text, axis labels, and button text.
+- Keep background hardware silhouettes at low opacity (`<= 0.1`) so they never obscure data points.

@@ -44,3 +44,8 @@ coverage/
 # Vite
 .vite/
 .playwright-cli/
+
+# Python
+__pycache__/
+*.py[cod]
+

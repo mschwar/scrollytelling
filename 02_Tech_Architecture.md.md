@@ -1,112 +1,74 @@
-## Project: The Compute "Phase Shift" Scrollytelling Visualization
+# Technical Architecture: Compute Scrollytelling Visualization
 
-**Version:** 1.0  
-**Dependency:** Reads 00_Master_Brief.md, 01_Narrative_Script.md
+**Version:** 1.0
+**Dependency:** Companion to [00_Master_Brief.md.md](./00_Master_Brief.md.md) and [01_Narrative_Script.md.md](./01_Narrative_Script.md.md)
 
 ---
 
 ## 1. Technology Stack
 
-We will use a lightweight, reactive stack optimized for DOM manipulation and vector graphics.
+The client uses a reactive frontend stack built for declarative SVG rendering:
 
-- **Core Framework:** **Svelte** (Version 4 or 5).
-    
-    - Reasoning: Svelte's reactive statements ($:) make syncing scroll progress to chart dimensions trivial compared to React's useEffect dependency hell.
-        
-- **Visualization:** **D3.js** (v7).
-    
-    - Usage: We use D3 only for scales (d3-scale), shapes (d3-shape), and axis generation. Svelte will handle the actual DOM rendering (SVG elements).
-        
-- **Scroll Logic:** **Scrollama** (via intersection-observer).
-    
-    - Usage: To dispatch "Step Enter" and "Step Exit" events.
-        
-- **Styling:** SCSS / Tailwind (Optional, but clean CSS is required).
-    
+- **Core Framework — Svelte 5:** Reactive declarations keep scroll state and chart dimensions synchronized without manual DOM diffing.
+- **Visualization — D3.js (v7):** Supplies mathematical scales (`d3-scale`) and path generators (`d3-shape`), while Svelte templates own SVG elements.
+- **Scroll Detection — Scrollama:** Dispatches step-enter events using browser intersection observers.
+- **Styling — Plain CSS:** Component-scoped styles and `src/app.css` custom properties without Sassy Cascading Style Sheets (SCSS) preprocessors.
 
 ---
 
 ## 2. Component Hierarchy
 
-The application structure should look like this:
+The implemented application structure in `src/` organizes state around `App.svelte`:
 
-codeText
-
-```
+```text
 src/
 ├── components/
-│   ├── Main.svelte          # Orchestrator (Holds the State)
-│   ├── Scrolly.svelte       # The Scrollama Wrapper (Generic)
-│   ├── Visualization/
-│   │   ├── Chart.svelte     # The SVG Container & D3 Scales
-│   │   ├── Axis.svelte      # X/Y Axis rendering
-│   │   ├── MooreLine.svelte # The Orange Dashed Line path
-│   │   ├── DataDots.svelte  # The Interactive Circles (Purple/Orange)
-│   │   └── Tooltip.svelte   # Hover state popup
-│   └── Background/
-│       └── Silhouette.svelte # The changing hardware icons (ENIAC -> GPU)
+│   ├── Background.svelte    # Hardware silhouettes (ENIAC to GPU clusters)
+│   ├── Chart.svelte         # Sticky SVG canvas, D3 scales, and focusable points
+│   ├── Narrative.svelte     # Five scrolling narrative cards and controls
+│   ├── Scrolly.svelte       # Scrollama step observer wrapper
+│   └── Tooltip.svelte       # Hover and keyboard readout card
 ├── data/
-│   └── compute_history.json # The dataset
-└── App.svelte
+│   └── compute_history.json # Curated compute dataset
+├── lib/
+│   ├── provenance.js        # Source grouping helper
+│   └── story-state.js       # Query-string state parser and serializer
+└── App.svelte               # Top-level state orchestrator
 ```
+
+Electronic Numerical Integrator and Computer (ENIAC) through modern cluster silhouettes render behind the sticky SVG layer.
 
 ---
 
 ## 3. State Management Strategy
 
-We do not need Redux. We will use Svelte's local state in Main.svelte passed down as props.
+Top-level state lives in `src/App.svelte` and flows downward via props:
 
-**Key State Variables:**
-
-1. currentStep (Integer: 0-4): Derived from Scrolly.svelte.
-    
-2. yDomain (Array: [min, max]): Reactive variable.
-    
-    - Step 0-1: [1, 1e15]
-        
-    - Step 2-4: [1, 1e27]
-        
-    - Logic: When currentStep changes, tween the yDomain values using svelte/motion to create the "Camera Zoom" effect.
-        
-3. isLinearMode (Boolean): Toggles the Scale function between d3.scaleLog and d3.scaleLinear.
-    
+1. `currentStep` (`0` through `4`): Updated by `Scrolly.svelte` and mirrored to `?step=` in the URL.
+2. `yDomain` (`[min, max]`): Tweened via `svelte/motion` from `[1, 1e15]` in early steps to `[1, 1e27]` in later steps.
+3. `isLinearMode` (boolean): Switches the vertical axis between `scaleLog` and `scaleLinear`.
+4. `showSpeculative` (boolean): Shows or hides speculative future points.
 
 ---
 
-## 4. Implementation Constraints (The "Rules")
+## 4. Implementation Rules
 
-### A. The "Declarative Chart" Rule
+### A. Declarative SVG Rendering
 
-Do not use d3.select('circle').transition().  
-Instead, bind Svelte variables to SVG attributes.
+Bind Svelte expressions directly to SVG attributes (`<circle cx={xScale(d.date_decimal)} cy={yScale(d.training_compute_flops)} />`) instead of mutating nodes with `d3.select().transition()`. Declarative bindings prevent rapid scrolling from desynchronizing visual state.
 
-- **Bad:** D3 chaining inside a useEffect.
-    
-- **Good:** <circle cx={xScale(d.date)} cy={yScale(d.flops)} />
-    
-- Why: This ensures that if the user scrolls fast, the DOM state never desyncs from the Scroll state.
-    
+### B. Sticky Layering
 
-### B. The "Sticky" Setup
+- Keep `.chart-container` sticky (`position: sticky; top: 0; height: 100vh;`).
+- Scroll narrative steps above the chart (`z-index: 2`) with `pointer-events: none` on the outer wrapper and `pointer-events: all` on `.step-content` so chart tooltips remain reachable.
 
-The CSS layout is critical for Scrollytelling.
+### C. Rendering Performance
 
-- The .chart-container must be position: sticky; top: 0; height: 100vh;.
-    
-- The .step-container must scroll over it with z-index: 10.
-    
-- Ensure pointer-events: none on the text boxes so they don't block tooltips on the chart.
-    
-
-### C. Performance
-
-- Use transform: translate(...) for moving the Tooltip (avoids layout repaints).
-    
-- If rendering >500 dots, use <canvas> layer for the dots. (Note: For this specific dataset, we expect <100 points, so SVG is preferred for crispness).
-    
+- Position tooltips with CSS `transform: translate(...)` to avoid layout thrashing.
+- Keep SVG rendering for datasets under 100 milestones so labels and focus rings stay crisp.
 
 ---
 
-## 5. Next Steps
+## 5. Next Specification
 
-Once this architecture is set up, proceed to 03_Data_Specs.md to define the JSON structure that feeds Chart.svelte.
+See [03_Data_Specs.md.md](./03_Data_Specs.md.md) for the JSON schema fields and baseline formulas consumed by `src/components/Chart.svelte`.
